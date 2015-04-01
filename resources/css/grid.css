@@ -1,0 +1,3 @@
+.pagination .pagination{ /* because of using Twiter Bootstrap 2 even Twiter Bootstrap 3 there have to be <div class="pagination"><ul class="pagination">...</ul></div>, so second .pagination have margin 0 */
+	margin: 0;
+}
