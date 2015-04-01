@@ -225,7 +225,8 @@ class SubGrid extends \Nette\Application\UI\PresenterComponent
 			->href($this->getLink($row))
 			->addClass($this->getClass($row))
 			->addClass("grid-button")
-			->setTitle($this->getLabel($row));
+			->setTitle($this->getLabel($row))
+			->add('<span class="glyphicon glyphicon-'.(preg_match('/open/', $this->getClass($row)) ? 'plus' : 'minus').' icon-'.(preg_match('/open/', $this->getClass($row)) ? 'plus' : 'minus').'"></span>');
 
 		if($this->ajax){
 			$el->addClass("grid-ajax");
