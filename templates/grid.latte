@@ -35,7 +35,6 @@
 						{/foreach}
 					</div>
 					<div class="grid-upper-info">
-						<a n:href="this" class="grid-current-link" data-placement="bottom" title="Získat odkaz na tuto stránku"><span class="glyphicon glyphicon-link icon-globe"></span></a>
 						<span class="grid-results">
 							celkem {$results} {($results == 1) ? "záznam" : (($results >= 2 && $results <= 4) ? "záznamy" : "záznamů")}{if $paginate} {if (boolean)$results}(Zobrazeno {$viewedFrom} až {$viewedTo}){/if}{/if}
 						</span>
@@ -182,5 +181,13 @@
 {if !$control->isSubGrid}
 {$control['gridForm']->render('end')}
 {/if}
+
+<script>
+	$(function () {
+		$(this).ajaxStop(function(){
+			window.history.pushState({}, null, {urldecode($control->link('this'))});
+		});
+	});
+</script>
 
 {/snippet}

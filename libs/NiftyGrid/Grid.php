@@ -120,6 +120,23 @@ abstract class Grid extends \Nette\Application\UI\Control
 			}
 			$this['gridForm'][$this->name]['action']['action_name']->setItems($actions);
 		}
+
+		if($this->hasActiveOrder() && $this->hasEnabledSorting()){
+			$this->orderData($this->order);
+		}
+		if(!$this->hasActiveOrder() && $this->hasDefaultOrder() && $this->hasEnabledSorting()){
+			$order = explode(" ", $this->defaultOrder);
+			$this->dataSource->orderData($order[0], $order[1]);
+		}
+	}
+
+	abstract protected function configure($presenter);
+
+	/**
+	 * @return void
+	 */
+	protected function paginate()
+	{
 		if($this->paginate){
 			if($this->hasActiveItemPerPage()){
 				if(in_array($this->perPage, $this['gridForm'][$this->name]['perPage']['perPage']->items)){
@@ -134,20 +151,19 @@ abstract class Grid extends \Nette\Application\UI\Control
 			}
 			$this->getPaginator()->itemsPerPage = $this->perPage;
 		}
+	}
+
+	/**
+	 * @return void
+	 */
+	protected function filter()
+	{
 		if($this->hasActiveFilter()){
 			$this->filterData();
 			$this['gridForm'][$this->name]['filter']->setDefaults($this->filter);
 		}
-		if($this->hasActiveOrder() && $this->hasEnabledSorting()){
-			$this->orderData($this->order);
-		}
-		if(!$this->hasActiveOrder() && $this->hasDefaultOrder() && $this->hasEnabledSorting()){
-			$order = explode(" ", $this->defaultOrder);
-			$this->dataSource->orderData($order[0], $order[1]);
-		}
 	}
-
-	abstract protected function configure($presenter);
+	
 
 	/**
 	 * @param string $subGrid
@@ -613,7 +629,10 @@ abstract class Grid extends \Nette\Application\UI\Control
 		}
 		catch(InvalidOrderException $e){
 			$this->flashMessage($e->getMessage(), "grid-error");
-			$this->redirect("this", array("order" => NULL));
+			$this->order = NULL;
+			if (!$this->presenter->isAjax()) {
+				$this->redirect("this");
+			}
 		}
 	}
 
@@ -790,11 +809,12 @@ abstract class Grid extends \Nette\Application\UI\Control
 						}
 						if($section == "filter"){
 							$this->filterFormSubmitted($values);
+							break 3;
 						}
 						$section = ($section == "rowForm") ? "row" : $section;
 						if(method_exists($this, $section."FormSubmitted")){
 							call_user_func("self::".$section."FormSubmitted", $container, $gridName);
-						}else{
+						}elseif(!$this->presenter->isAjax()){
 							$this->redirect("this");
 						}
 						break 3;
@@ -816,7 +836,9 @@ abstract class Grid extends \Nette\Application\UI\Control
 		}else{
 			call_user_func($this->rowFormCallback, (array) $values);
 		}
-		$this->redirect("this");
+		if (!$this->presenter->isAjax()) {
+			$this->redirect("this");
+		}
 	}
 
 	/**
@@ -825,9 +847,15 @@ abstract class Grid extends \Nette\Application\UI\Control
 	 */
 	public function perPageFormSubmitted($values, $gridName)
 	{
-		$perPage = ($gridName == $this->name) ? "perPage" : $gridName."-perPage";
+		if ($gridName == $this->name) {
+			$this->perPage = $values["perPage"];
+		} else {
+			$this[$gridName]->perPage = $values["perPage"];
+		}
 
-		$this->redirect("this", array($perPage => $values["perPage"]));
+		if (!$this->presenter->isAjax()) {
+			$this->redirect("this");
+		}
 	}
 
 	/**
@@ -856,7 +884,9 @@ abstract class Grid extends \Nette\Application\UI\Control
 			}else{
 				call_user_func($this['actions']->components[$values['action_name']]->getCallback(), $rows);
 			}
-			$this->redirect("this");
+			if (!$this->presenter->isAjax()) {
+				$this->redirect("this");
+			}
 		}
 		catch(NoRowSelectedException $e){
 			if($subGrid){
@@ -864,7 +894,9 @@ abstract class Grid extends \Nette\Application\UI\Control
 			}else{
 				$this->flashMessage("Nebyl vybrán žádný záznam.","grid-error");
 			}
-			$this->redirect("this");
+			if (!$this->presenter->isAjax()) {
+				$this->redirect("this");
+			}
 		}
 	}
 
@@ -874,8 +906,6 @@ abstract class Grid extends \Nette\Application\UI\Control
 	public function filterFormSubmitted($values)
 	{
 		unset($values['do']);
-		$filters = array();
-		$paginators = array();
 		foreach($values as $gridName => $grid){
 			$isSubGrid = ($gridName == $this->name) ? FALSE : TRUE;
 			foreach($grid['filter'] as $name => $value){
@@ -885,21 +915,27 @@ abstract class Grid extends \Nette\Application\UI\Control
 					}
 					if($isSubGrid){
 						$gridName = $this->findSubGridPath($gridName);
-						$filters[$this->name."-".$gridName."-filter"][$name] = $value;
+						$this[$gridName]->filter[$name] = $value;
 					}else{
-						$filters[$this->name."-filter"][$name] = $value;
+						$this->filter[$name] = $value;
 					}
 				}
 			}
 			if($isSubGrid){
-				$paginators[$this->name."-".$gridName."-paginator-page"] = NULL;
-				if(empty($filters[$this->name."-".$gridName."-filter"])) $filters[$this->name."-".$gridName."-filter"] = array();
-			}else{
-				$paginators[$this->name."-paginator-page"] = NULL;
-				if(empty($filters[$this->name."-filter"])) $filters[$this->name."-filter"] = array();
+				$this[$gridName]->getPaginator()->page = NULL;
+				if (empty($this[$gridName]->filter)) {
+					$this[$gridName]->filter = array();
+				}
+			} else {
+				$this->getPaginator()->page = NULL;
+				if (empty($this->filter)) {
+					$this->filter = array();
+				}
 			}
 		}
-		$this->presenter->redirect("this", array_merge($filters, $paginators));
+		if (!$this->presenter->isAjax()) {
+			$this->redirect("this");
+		}
 	}
 
 	/**
@@ -912,6 +948,8 @@ abstract class Grid extends \Nette\Application\UI\Control
 
 	public function render()
 	{
+		$this->paginate();
+		$this->filter();
 		$count = $this->getCount();
 		$this->getPaginator()->itemCount = $count;
 		$this->template->results = $count;
