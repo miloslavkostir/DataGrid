@@ -569,12 +569,11 @@ abstract class Grid extends \Nette\Application\UI\Control
 	 */
 	protected function filterData()
 	{
-		try{
-			$filters = array();
-			foreach($this->filter as $name => $value){
+		$filters = array();
+		foreach($this->filter as $name => $value){
+			try{
 				if(!$this->columnExists($name)){
 					throw new UnknownColumnException("Neexistující sloupec $name");
-
 				}
 				if(!$this['columns-'.$name]->hasFilter()){
 					throw new UnknownFilterException("Neexistující filtr pro sloupec $name");
@@ -598,16 +597,14 @@ abstract class Grid extends \Nette\Application\UI\Control
 					throw new InvalidFilterException("Neplatný filtr");
 				}
 			}
-			return $this->dataSource->filterData($filters);
+			catch(UnknownColumnException $e){
+				$this->flashMessage($e->getMessage(), "grid-error");
+			}
+			catch(UnknownFilterException $e){
+				$this->flashMessage($e->getMessage(), "grid-error");
+			}
 		}
-		catch(UnknownColumnException $e){
-			$this->flashMessage($e->getMessage(), "grid-error");
-			$this->redirect("this", array("filter" => NULL));
-		}
-		catch(UnknownFilterException $e){
-			$this->flashMessage($e->getMessage(), "grid-error");
-			$this->redirect("this", array("filter" => NULL));
-		}
+		return $this->dataSource->filterData($filters);
 	}
 
 	/**
