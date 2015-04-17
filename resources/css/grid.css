@@ -9,8 +9,10 @@
 	display: inline-block;
 }
 
-.grid.table th.grid-filter-form input,
-.grid.table th.grid-filter-form select{
+.grid.table th input,
+.grid.table th select,
+.grid.table td input,
+.grid.table td select{
 	margin:0;
 }
 
