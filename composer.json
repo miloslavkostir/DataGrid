@@ -19,7 +19,6 @@
 		"nette/nette" : ">=2.0"
 	},
 	"autoload": {
-		"psr-0": { "NiftyGrid": "libs/" },
-		"classmap": [ "libs/NiftyGrid/GridExceptions.php" ]
+		"classmap": ["src/"]
 	}
 }
