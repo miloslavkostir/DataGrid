@@ -126,7 +126,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 		}
 		if(!$this->hasActiveOrder() && $this->hasDefaultOrder() && $this->hasEnabledSorting()){
 			$order = explode(" ", $this->defaultOrder);
-			$this->dataSource->orderData($order[0], $order[1]);
+			$this->dataSource->orderData($order[0], isset($order[1]) ? $order[1] : 'ASC');
 		}
 	}
 
