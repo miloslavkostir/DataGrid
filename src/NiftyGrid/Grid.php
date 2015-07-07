@@ -668,6 +668,14 @@ abstract class Grid extends \Nette\Application\UI\Control
 	}
 
 	/**
+	 * @return \NiftyGrid\GridPaginator
+	 */
+	public function getGridPaginator()
+	{
+		return $this['paginator'];
+	}
+
+	/**
 	 * @param int $page
 	 */
 	public function handleChangeCurrentPage($page)
