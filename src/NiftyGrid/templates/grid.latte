@@ -170,7 +170,7 @@
 	<span n:if="$paginate" class="grid-perPage form-inline pull-right">
 		{$control['gridForm'][$control->name]['perPage']['perPage']->label}
 		{$control['gridForm'][$control->name]['perPage']['perPage']->getControl()->addClass('form-control input-small')}
-		<button n:name="perPage-send" class="{($class = $_form['perPage']['send']->getControl()->class) !== NULL  ? implode(' ', array_keys($class)).' '}btn btn-info grid-ajax">{$_form['perPage']['send']->caption}</button>
+		<button n:name="$control['gridForm'][$control->name]['perPage']['send']" class="grid-perpagesubmit button btn btn-info grid-ajax">{$control['gridForm'][$control->name]['perPage']['send']->caption}</button>
 	</span>
 </div>
 
