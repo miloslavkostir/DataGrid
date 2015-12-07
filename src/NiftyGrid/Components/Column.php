@@ -52,6 +52,9 @@ class Column extends \Nette\Application\UI\PresenterComponent
 
 	/** @var int */
 	public $autocompleteResults = 10;
+	
+	/** @var string */
+	public $autocompleteCondition;
 
 	/** @var bool */
 	public $editable = FALSE;
@@ -194,11 +197,12 @@ class Column extends \Nette\Application\UI\PresenterComponent
 
 	/**
 	 * @param int $numOfResults
+	 * @param string STARTSWITH or CONTAINS
 	 * @return Column
 	 * @throws NiftyGrid\InvalidFilterException
 	 * @throws NiftyGrid\UnknownFilterException
 	 */
-	public function setAutocomplete($numOfResults = 10)
+	public function setAutocomplete($numOfResults = 10, $condition = FilterCondition::STARTSWITH)
 	{
 		if(empty($this->filterType)){
 			throw new NiftyGrid\UnknownFilterException("Autocomplete can't be used without filter.");
@@ -215,6 +219,11 @@ class Column extends \Nette\Application\UI\PresenterComponent
 
 		$this->autocompleteResults = $numOfResults;
 
+		if ($condition !== FilterCondition::STARTSWITH AND $condition !== FilterCondition::CONTAINS) {
+			throw new NiftyGrid\InvalidFilterException('Argument 2 passed to '.__METHOD__.' must be only NiftyGrid\FilterCondition::STARTSWITH or NiftyGrid\FilterCondition::CONTAINS.');
+		}
+		$this->autocompleteCondition = $condition;
+
 		return $this;
 	}
 
@@ -224,6 +233,14 @@ class Column extends \Nette\Application\UI\PresenterComponent
 	public function getAutocompleteResults()
 	{
 		return $this->autocompleteResults;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAutocompleteCondition()
+	{
+		return $this->autocompleteCondition;
 	}
 
 	/**

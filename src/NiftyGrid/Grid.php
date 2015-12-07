@@ -703,7 +703,12 @@ abstract class Grid extends \Nette\Application\UI\Control
 	{
 		if($this->presenter->isAjax()){
 			if(!empty($this['columns']->components[$column]) && $this['columns']->components[$column]->autocomplete){
-				$this->filter[$column] = $term."%";
+				$condition = $this['columns']->components[$column]->getAutocompleteCondition();
+				if ($condition === FilterCondition::CONTAINS) {
+					$this->filter[$column] = $term;
+				} else {
+					$this->filter[$column] = $term."%";
+				}
 				$this->filterData();
 				$this->dataSource->limitData($this['columns']->components[$column]->getAutocompleteResults(), NULL);
 				$data = $this->dataSource->getData();
