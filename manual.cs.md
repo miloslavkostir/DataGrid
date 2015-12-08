@@ -1,7 +1,7 @@
 Manuál
 ======
 
-*zkopírováno z https://addons.nette.org/nifty/nifty-grid*
+*zkopírováno z https://addons.nette.org/nifty/nifty-grid a dále aktualizováno*
 
 Základní použití
 ----------------
@@ -64,17 +64,26 @@ Vlastní nastavení
 ```php
 //pro vypnutí stránkování a zobrazení všech záznamů
 $this->paginate = FALSE;
+
 //zruší řazení všech sloupců
 $this->enableSorting = FALSE;
+
 //nastavení šířky celého gridu
 $this->setWidth('1000px');
+
 //defaultní řazení
 $this->setDefaultOrder("article.id DESC");
+
 //počet záznamů v rozbalovacím seznamu
 $this->setPerPageValues(array(10, 20, 50, 100));
+
 //vypnutí řazení na konkrétní sloupec
 $this->addColumn('column', 'Column')
     ->setSortable(FALSE);
+    
+//nastavení vlastních šablon
+$this->setTemplate('cesta/ke/grid-sablone.latte');
+$this->getPaginator()->setTemplate('cesta/k/paginator-sablone.latte');
 ```
 
 Formátování výsledku
@@ -191,8 +200,10 @@ setTextFilter();
 setNumericFilter();
 setDateFilter();
 setSelectFilter(array $values, $prompt);
+setMultiSelectFilter(array $values);
 setBooleanFilter();
 ```
+> V případě použití multiselectu lze použít přiložený javascript `assets/js/grid.multiselect.js`
 
 Pokud je v Gridu potřeba sloupec z připojené tabulky a chceme v daném sloupci filtrovat záznamy, použije se metoda u sloupce setTableName(„table.column“).
 
@@ -227,12 +238,15 @@ Filtrování **čísel** a **data**
 Autocomplete
 ------------
 
-Autocomplete se nastavuje pro filtr a může být použit pouze s textovým filtrem. Nastavuje se až po filtru. Jediný parametr je počet vyhledávaných záznamů.
+Autocomplete se nastavuje pro filtr a může být použit pouze s textovým filtrem. Nastavuje se až po filtru.   
+První parametr je počet vyhledávaných záznamů, druhý nastavuje způsob vyhledávání:   
+* konstanta `FilterCondition::STARTSWITH` (výchozí) "napovídá" slova začínající vepsaným řetězcem
+* konstanta `FilterCondition::CONTAINS` "napovídá" slova obsahující vepsaný řetězec - použitelné zejména u jmen/příjmení (Jack Daniels je napovězeno při psaní "jac" i "dan") 
 
 ```php
 $this->addColumn('column', 'Column')
     ->setTextFilter()
-    ->setAutocomplete($numOfResults);
+    ->setAutocomplete($numOfResults, FilterCondition::CONTAINS);
 ```
 
 SubGridy
