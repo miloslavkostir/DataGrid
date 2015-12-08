@@ -2,7 +2,7 @@
 /**
  * NiftyGrid - DataGrid for Nette
  *
- * @author	Jakub Holub
+ * @authors		Jakub Holub, Miloslav Koštíř
  * @copyright	Copyright (c) 2012 Jakub Holub
  * @license     New BSD Licence
  * @link        http://addons.nette.org/cs/niftygrid
@@ -1001,6 +1001,8 @@ abstract class Grid extends \Nette\Application\UI\Control
 			$this->template->setTranslator($this->getTranslator());
 		}
 
+		$this->template->filters = $this->getFilterList();
+
 		$this->template->setFile($templatePath);
 		$this->template->render();
 	}
@@ -1026,4 +1028,39 @@ abstract class Grid extends \Nette\Application\UI\Control
 
 		return null;
 	}
+
+	/**
+	 * @return array
+	 */
+	private function getFilterList()
+	{
+		$filters = NULL;
+
+		foreach ($this->filter as $aspect => $filter) {
+			if (!isset($this['columns']->components[$aspect]) OR !isset($this['gridForm'][$this->name]['filter'][$aspect])) {
+				continue;
+			}
+
+			$control = $this['gridForm'][$this->name]['filter'][$aspect];
+
+			if (isset($control->items)) {
+				// SELECTS
+				$value = array();
+				foreach ((array) $filter as $f) {
+					if ($f !== "" AND isset($control->items[$f])) {
+						$value[] = $control->items[$f];
+					} 
+				}
+				$value = implode(', ', $value);
+
+			} else {
+				$value = $filter;
+			}
+
+			$filters[] = array('label' => $this['columns']->getComponent($aspect)->label, 'value' => $value);
+		}
+
+		return $filters;
+	}
+
 }

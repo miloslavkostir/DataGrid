@@ -2,7 +2,7 @@
 /**
  * NiftyGrid - DataGrid for Nette
  *
- * @author	Jakub Holub
+ * @authors		Jakub Holub, Miloslav Koštíř
  * @copyright	Copyright (c) 2012 Jakub Holub
  * @license     New BSD Licence
  * @link        http://addons.nette.org/cs/niftygrid
@@ -391,6 +391,22 @@ class Column extends \Nette\Application\UI\PresenterComponent
 			$this->parent['gridForm'][$this->parent->name]['filter'][$this->name]->setPrompt($prompt);
 		}
 		$this->filterType = FilterCondition::SELECT;
+
+		return $this;
+	}
+
+	/**
+	 * @param array $values
+	 * @return Column
+	 */
+	public function setMultiSelectFilter($values)
+	{
+		$vals[NULL] = '------';
+		foreach ($values as $key => $value) {
+			$vals[$key] = $value;
+		}
+		$this->parent['gridForm'][$this->parent->name]['filter']->addMultiSelect($this->name, $this->label.":", $vals, 1)->setAttribute('title', 'Pro více položek použijte CTRL');
+		$this->filterType = FilterCondition::MULTISELECT;
 
 		return $this;
 	}

@@ -2,7 +2,7 @@
 /**
  * NiftyGrid - DataGrid for Nette
  *
- * @author	Jakub Holub
+ * @authors		Jakub Holub, Miloslav Koštíř
  * @copyright	Copyright (c) 2012 Jakub Holub
  * @license     New BSD Licence
  * @link        http://addons.nette.org/cs/niftygrid
@@ -18,6 +18,7 @@ class FilterCondition extends \Nette\Object
 	/* filter types */
 	const TEXT = "text";
 	const SELECT = "select";
+	const MULTISELECT = "multiselect";
 	const NUMERIC = "numeric";
 	const DATE = "date";
 	const BOOLEAN = "boolean";
@@ -35,6 +36,7 @@ class FilterCondition extends \Nette\Object
 	const LOWER = "lower";
 	const LOWEREQUAL = "lowerEqual";
 	const DIFFERENT = "different";
+	const IN = "in";
 
 	const DATE_EQUAL = "dateEqual";
 	const DATE_HIGHER = "dateHigher";
@@ -95,10 +97,16 @@ class FilterCondition extends \Nette\Object
 	 */
 	public static function prepareFilter($value, $type)
 	{
-		/* select nebo boolean muze byt pouze equal */
+		/* select or boolean can be only equal */
 		if($type == self::SELECT || $type == self::BOOLEAN)
 			return array(
 				"condition" => self::EQUAL,
+				"value" => $value
+			);
+		/* multiselect can be only in */
+		elseif($type == self::MULTISELECT)
+			return array(
+				"condition" => self::IN,
 				"value" => $value
 			);
 		elseif($type == self::TEXT){
@@ -383,6 +391,22 @@ class FilterCondition extends \Nette\Object
 			"value" => $value,
 			"columnFunction" => "DATE",
 			"valueFunction" => "DATE"
+		);
+	}
+
+
+	/**
+	 * @static
+	 * @param array $values
+	 * @return array
+	 */
+	public static function in($values)
+	{
+		return array(
+			"type" => self::WHERE,
+			"datatype" => self::TEXT,
+			"cond" => "",
+			"value" => $values,
 		);
 	}
 }

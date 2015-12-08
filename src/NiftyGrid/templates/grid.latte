@@ -80,7 +80,7 @@
 			<th n:foreach="$subGrids as $subGrid" class="grid-filter-form"></th>
 			<th n:foreach="$columns as $column" n:attr="class => array(grid-filter-form, $control->isSpecificFilterActive($column->name) ? grid-filter-form-active)">
 				{if $column->hasFilter()}
-					{$control['gridForm'][$control->name]['filter'][$column->name]->getControl()->addClass('input-block-level form-control')}
+					<div>{$control['gridForm'][$control->name]['filter'][$column->name]->getControl()->addClass('input-block-level form-control')}</div>
 				{/if}
 			</th>
 			<th class="grid-filter-form">
@@ -93,6 +93,20 @@
 					{/if}
 				</div>
 			</th>
+		</tr>
+
+		{* LIST OF FILTER *}
+		<tr n:if="$control->hasFilterForm() && $filters">
+			<td colspan="{$colsCount}">
+				<a n:if="$filters" n:href="this filter => NULL, paginator-page => NULL" title="Zrušit filtr"><span class="icon-remove glyphicon glyphicon-remove"></span></a> <strong>APLIKOVANÝ FILTR :</strong><br>
+				{if $filters}
+					{foreach $filters as $filter}
+						{$filter['label']} : {$filter['value']}<br>
+					{/foreach}
+				{else}
+					<em>Seznam není filtrován</em>
+				{/if}
+			</td>
 		</tr>
 	</thead>
 	<tbody>
