@@ -132,14 +132,20 @@ $this->addButton("delete", "Smazat")
     ->setClass("delete")
     ->setLink(function($row) use ($self){return $self->link("delete!", $row['id']);})
     ->setConfirmationDialog(function($row){return "Určitě chcete odstranit článek $row[title]?";});
+```
+
 Pokud bychom nechtěli na akci využít AJAX, například při odkazu na jiný Presenter, použijeme metodu setAjax(FALSE)
 
+```php
 $this->addButton("edit", "Editovat")
     ->setClass("edit")
     ->setLink(function($row) use ($presenter){return $presenter->link("article:edit", $row['id']);})
     ->setAjax(FALSE);
+```
+
 Můžeme vytvořit i akci, která bude mit jinou funkci na základě hodnoty řádku. Například akce pro publikování/odpublikování článku.
 
+```php
 $this->addButton("publish")
     ->setLabel(function ($row) use ($self) {return $row['status'] === 1 ? "Odpublikovat" : "Publikovat";})
     ->setLink(function($row) use ($self){return $row['status'] === 1 ? $self->link("unpublish!", $row['id']) : $self->link("publish!", $row['id']);})

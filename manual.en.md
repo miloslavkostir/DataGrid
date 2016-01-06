@@ -131,14 +131,20 @@ $this->addButton("delete", "Remove")
     ->setClass("delete")
     ->setLink(function($row) use ($self){return $self->link("delete!", $row['id']);})
     ->setConfirmationDialog(function($row){return "Are you sure to remove article $row[title]?";});
+```
+
 If you don't use AJAX, e.g. redirect to another presenter, use method setAjax(FALSE).
 
+```php
 $this->addButton("edit", "Edit")
     ->setClass("edit")
     ->setLink(function($row) use ($presenter){return $presenter->link("article:edit", $row['id']);})
     ->setAjax(FALSE);
+```
+
 You can create action with different functions depending on row value. For example for publish/unpublish article.
 
+```php
 $this->addButton("publish")
     ->setLabel(function ($row) use ($self) {return $row['status'] === 1 ? "Unpublish" : "Publish";})
     ->setLink(function($row) use ($self){return $row['status'] === 1 ? $self->link("unpublish!", $row['id']) : $self->link("publish!", $row['id']);})
