@@ -12,6 +12,13 @@ Vlastní Grid vytvoříme v samostatné třídě (znovupoužitelnost, přehledno
 
 Pro příklady budeme používat následující databázi: 
 
+|id |category_id|user_id|title           |published          |status|views|
+|---|-----------|-------|----------------|-------------------|------|-----|
+|1  |10         |30     |Ford Mustang    |2015-08-12 12:33:45|1     |25   |
+|2  |14         |26     |Chevrolet Camaro|2015-08-14 10:18:37|1     |18   |
+|3  |8          |18     |Dodge Charger   |2015-08-15 14:45:55|0     |11   |
+
+
 1. V presenteru si vytvoříme továrničku na svůj Grid a do konstruktoru předáme tabulku.
 
 ```php
@@ -40,7 +47,7 @@ class ArticleGrid extends Grid{
     {
         //Vytvoříme si zdroj dat pro Grid
         //Při výběru dat vždy vybereme id
-        $source = new \NiftyGrid\NDataSource($this->articles->select('article.id, title, status, published, category.name AS category_name, user.username, user.id AS user_id'));
+        $source = new \NiftyGrid\NDataSource($this->articles->select('article.id, title, status, views, published, category.name AS category_name, user.username, user.id AS user_id'));
         //Předáme zdroj
         $this->setDataSource($source);
     }
@@ -134,9 +141,9 @@ $this->addButton("edit", "Editovat")
 Můžeme vytvořit i akci, která bude mit jinou funkci na základě hodnoty řádku. Například akce pro publikování/odpublikování článku.
 
 $this->addButton("publish")
-    ->setLabel(function ($row) use ($self) {return $row['status'] == "Publikované" ? "Odpublikovat" : "Publikovat";})
-    ->setLink(function($row) use ($self){return $row['status'] == "Publikované" ? $self->link("unpublish!", $row['id']) : $self->link("publish!", $row['id']);})
-    ->setClass(function ($row) use ($self) {return $row['status'] == "Publikované" ? "unpublish" : "publish";});
+    ->setLabel(function ($row) use ($self) {return $row['status'] === 1 ? "Odpublikovat" : "Publikovat";})
+    ->setLink(function($row) use ($self){return $row['status'] === 1 ? $self->link("unpublish!", $row['id']) : $self->link("publish!", $row['id']);})
+    ->setClass(function ($row) use ($self) {return $row['status'] === 1 ? "unpublish" : "publish";});
 ```
 
 Hromadné akce
@@ -244,9 +251,9 @@ První parametr je počet vyhledávaných záznamů, druhý nastavuje způsob vy
 * konstanta `FilterCondition::CONTAINS` "napovídá" slova obsahující vepsaný řetězec - použitelné zejména u jmen/příjmení (Jack Daniels je napovězeno při psaní "jac" i "dan") 
 
 ```php
-$this->addColumn('column', 'Column')
+$this->addColumn('name', 'Jméno')
     ->setTextFilter()
-    ->setAutocomplete($numOfResults, FilterCondition::CONTAINS);
+    ->setAutocomplete(15, FilterCondition::CONTAINS);
 ```
 
 SubGridy

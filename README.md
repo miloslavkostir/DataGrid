@@ -24,4 +24,4 @@ $.nette.init(function (ajaxHandler) {
 
 ## Usage
 
-[See manual (cz)](./manual.cs.md) TODO manual.en
+See manual [en](./manual.en.md) [cz](./manual.cs.md)
