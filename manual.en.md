@@ -64,7 +64,9 @@ $this->addColumn('status', 'Status', '100px');
 $this->addColumn('views', 'Views', '100px');
 ```
 
-First parameter (required) is name of column. Second parameter, label, is title of column. Third parameter is width of column - it can be in pixels or percents. Last parameter is truncation of text.
+First parameter (required) is name of column. Second parameter, label, is title of column. Third parameter is width of column - it can be in pixels or percents. Last parameter is truncation of text.     
+
+Method addColumn returns instance of class `NiftyGrid\Components\Column`
 
 Settings
 
@@ -122,13 +124,16 @@ $this->addColumn('views', 'Views', '100px')
 
 Row actions
 -----------
-For adding row action use method addButton. First parameter is name of button, second parameter is label. Then you can define css class by method setClass, link by setLink and confirmation dialog by setConfirmationDialog. 
+`NiftyGrid\Components\Button`    
+
+For adding row action use method addButton. First parameter is name of button, second parameter is label (HTML attribute title). 
+Text of button you can define by method addText. Then you can define css class by method setClass, link by setLink, target by setTarget and confirmation dialog by setConfirmationDialog. 
 
 ```php
 $self = $this;
 
 $this->addButton("delete", "Remove")
-    ->setClass("delete")
+    ->setClass("icon-delete")
     ->setLink(function($row) use ($self){return $self->link("delete!", $row['id']);})
     ->setConfirmationDialog(function($row){return "Are you sure to remove article $row[title]?";});
 ```
@@ -151,8 +156,17 @@ $this->addButton("publish")
     ->setClass(function ($row) use ($self) {return $row['status'] === 1 ? "unpublish" : "publish";});
 ```
 
+And display of button you can also control by anonymous function.
+
+```php
+$this->addButton("delete")
+	->setShow(function($row) use ($presenter) {return $presenter->getUser()->isAllowed('Articles', 'delete');})
+    ...
+```
+
 Mass actions
 ------------
+`NiftyGrid\Components\Action`   
 
 For adding mass action use method addAction. Parameter id in method setCallback contains array with id of selected columns.
 
@@ -201,6 +215,24 @@ $this->setRowFormCallback(function($values){
 );
 ```
 
+Global action
+-------------
+`NiftyGrid\Components\GlobalButton`   
+
+Global action is basically global button with random link. It's defined by method addClobalButton and usage is similar like row action `NiftyGrid\Components\Button`.
+
+```php
+$this->addGlobalButton("export", "Export")
+	->setClass('icon-export')
+	->setLink(function() {return $this->link("export!");})  // notice that anonymous function doesn't have parameter $row - that's global action, not depend on any row
+	->setTitle("Exports data to CSV file");
+```
+
+The most frequent use is for adding new record to database. This is very simple if there is enabled row editing - just set predefined constant ADD_ROW as first parameter:
+
+```php
+	$this->addGlobalButton(self::ADD_ROW, "Add new record");
+```
 
 Filtering
 ---------
@@ -263,6 +295,7 @@ $this->addColumn('name', 'Full name')
 
 SubGrids
 --------
+`NiftyGrid\Components\SubGrid`   
 
 Each Grid can have more SubGrids. Each SubGrid can have more SubGrids. Adding SubGrid is very simple:
 

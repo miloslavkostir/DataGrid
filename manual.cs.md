@@ -64,7 +64,9 @@ $this->addColumn('status', 'Status', '100px');
 $this->addColumn('views', 'Zobrazení', '100px');
 ```
 
-První parametr a zároveň jediný povinný je název sloupce. Druhý parametr, label, je záhlaví sloupce. Třetí parametr je šířka sloupce – může být v pixelech i procentech. Poslední parametr je oříznutí textu.
+První parametr a zároveň jediný povinný je název sloupce. Druhý parametr, label, je záhlaví sloupce. Třetí parametr je šířka sloupce – může být v pixelech i procentech. Poslední parametr je oříznutí textu.     
+
+Metoda addColumn vrací instanci třídy `NiftyGrid\Components\Column`
 
 Vlastní nastavení
 
@@ -122,14 +124,16 @@ $this->addColumn('views', 'Zobrazení', '100px')
 
 Řádkové akce
 ------------
-
-Pro přidání řádkové akce slouží metoda addButton. Pomocí třídy se nastaví ikonka a pro odkaz a potvrzující dialog slouží anonymní funkce.
+`NiftyGrid\Components\Button`    
+  
+Pro přidání řádkové akce slouží metoda addButton. První parametr je název komponenty a druhý je popisek (HTML atribut title). 
+Text tlačítka nastavíme metodou addText. Dále můžeme nastavit css třídu metodou setClass, odkaz pomocí setLink, target pomocí setTarget a potvrzovací dialog pomocí setConfirmationDialog.
 
 ```php
 $self = $this;
 
 $this->addButton("delete", "Smazat")
-    ->setClass("delete")
+    ->setClass("icon-delete")
     ->setLink(function($row) use ($self){return $self->link("delete!", $row['id']);})
     ->setConfirmationDialog(function($row){return "Určitě chcete odstranit článek $row[title]?";});
 ```
@@ -152,8 +156,17 @@ $this->addButton("publish")
     ->setClass(function ($row) use ($self) {return $row['status'] === 1 ? "unpublish" : "publish";});
 ```
 
+A konečně zobrazení tlačítka můžeme řídit také pomocí anonymní funkce.
+
+```php
+$this->addButton("delete")
+	->setShow(function($row) use ($presenter) {return $presenter->getUser()->isAllowed('Articles', 'delete');})
+    ...
+```	
+
 Hromadné akce
 -------------
+`NiftyGrid\Components\Action`   
 
 Pro přidání hromadné akce použijeme metodu addAction. V metodě setCallback je parametr id, který obsahuje pole s hodnotami id vybraných sloupců.
 
@@ -202,6 +215,24 @@ $this->setRowFormCallback(function($values){
 );
 ```
 
+Globální akce
+-------------
+`NiftyGrid\Components\GlobalButton`   
+
+Globální akce je v podstatě globální tlačítko s libovolným odkazem. Definuje se metodou addGlobalButton a použití je podobné, jako u řádkové akce `NiftyGrid\Components\Button`     
+
+```php
+$this->addGlobalButton("export", "Exportovat")
+	->setClass('icon-export')
+	->setLink(function() {return $this->link("export!");})  // všimněte si, že anonymní funkce nemá parametr $row - je to globální akce, není závyslá na žádném řádku
+	->setTitle("Vyexportuje data do CSV");
+```
+
+Nejčastější využití globální akce je pro přidání nového záznamu. Pokud je aktivovaná řádková editace, je přidání nového záznamu velice jednoduché - stačí jako první parametr předat předdefinovanou konstantu ADD_ROW:
+
+```php
+	$this->addGlobalButton(self::ADD_ROW, "Přidat záznam");
+```
 
 Filtrování dat
 --------------
@@ -264,6 +295,7 @@ $this->addColumn('name', 'Jméno')
 
 SubGridy
 --------
+`NiftyGrid\Components\SubGrid`   
 
 Každý Grid může mit více SubGridů. Každý SubGrid může mít další SubGridy. Přidání SubGridy je velice jednoduché, viz kód:
 
