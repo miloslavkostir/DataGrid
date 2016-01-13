@@ -137,6 +137,9 @@ $this->addButton("delete", "Remove")
     ->setLink(function($row) use ($self){return $self->link("delete!", $row['id']);})
     ->setConfirmationDialog(function($row){return "Are you sure to remove article $row[title]?";});
 ```
+> **Notice:**   
+> There is a problem with confirmation dialog (JS function confirm()), if you discard confirmation dialog AJAX request will be proceed anyway.     
+> This is solved in `assets/js/grid.ajax.js` file. If you use your own script don't forget fix this problem. Easiest solution is disable AJAX on columns with confirmation dialog.                 
 
 If you don't use AJAX, e.g. redirect to another presenter, use method setAjax(FALSE).
 

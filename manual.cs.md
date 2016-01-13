@@ -137,6 +137,9 @@ $this->addButton("delete", "Smazat")
     ->setLink(function($row) use ($self){return $self->link("delete!", $row['id']);})
     ->setConfirmationDialog(function($row){return "Určitě chcete odstranit článek $row[title]?";});
 ```
+> **Poznámka:**   
+> Problém je s potvrzovacím dialogem (JS funkce confirm()), když nepotvrdíte akci, AJAX požadavek přesto proběhne.       
+> V souboru `assets/js/grid.ajax.js` je to jednoduše vyřešeno. Pokud místo něj používáte vlastní script, nezapomeňte tento problém ošetřit. Nejjednodužší řešení je vypnout AJAX u tlačítek s potvrzovacím dialogem.     
 
 Pokud bychom nechtěli na akci využít AJAX, například při odkazu na jiný Presenter, použijeme metodu setAjax(FALSE)
 

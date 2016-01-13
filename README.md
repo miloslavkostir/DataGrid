@@ -14,13 +14,18 @@ Copy resources:
 * `assets/js/grid.js`
 
 to your public www dir and include them in template (usually in `@layout.latte`). grid.js needs jQuery and jQuery UI - download them from original source or use files from `assets/`.   
-For AJAX use [nette.ajax.js](http://addons.nette.org/vojtech-dobes/nette-ajax-js) and add selector .grid-ajax :
+For AJAX use `assets/js/grid.ajax.js`. You can use some third party ajax addon instead, e.g. [nette.ajax.js](http://addons.nette.org/vojtech-dobes/nette-ajax-js):
 
-```
+```js
+// just add selector .grid-ajax
 $.nette.init(function (ajaxHandler) {
 	$('.grid-ajax').on('click', ajaxHandler);
 });
 ```
+> **Notice:**   
+> There is a problem with JS confirm(), if you discard confirmation dialog AJAX request will be proceed anyway.   
+> This is solved in `assets/js/grid.ajax.js` file. If you don't use it you will probably have to create own solution.   
+> See [manual](./manual.en.md#4) (section Row actions) for more informations.    
 
 ## Usage
 
