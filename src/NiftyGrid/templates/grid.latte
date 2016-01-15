@@ -24,17 +24,17 @@
 		<tr n:if="$control->gridName">
 			<th colspan="{$colsCount}" class="grid-name">{$control->gridName}</th>
 		</tr>
-		
+
 		{* POCET ZAZNAMU / GLOBAL BUTTONS *}
 		<tr class="grid-panel">
 			<th colspan="{$colsCount}">
 				<div class="grid-upper-panel">
-					<div n:if="$control->hasGlobalButtons()">
+					<div n:if="$control->hasGlobalButtons()" class="pull-left">
 						{foreach $globalButtons as $globalButton}
 							{control $globalButton}
 						{/foreach}
 					</div>
-					<div class="grid-upper-info">
+					<div class="grid-upper-info pull-right">
 						<span class="grid-results">
 							celkem {$results} {($results == 1) ? "záznam" : (($results >= 2 && $results <= 4) ? "záznamy" : "záznamů")}{if $paginate} {if (boolean)$results}(Zobrazeno {$viewedFrom} až {$viewedTo}){/if}{/if}
 						</span>
@@ -199,7 +199,7 @@
 <script>
 	$(function () {
 		$(this).ajaxStop(function(){
-			window.history.pushState({}, null, {urldecode($control->link('this'))});
+			window.history.pushState({}, null, {rawurldecode($control->link('this'))});
 		});
 	});
 </script>
