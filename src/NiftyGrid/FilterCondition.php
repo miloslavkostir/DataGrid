@@ -179,7 +179,7 @@ class FilterCondition extends \Nette\Object
 	{
 		return array(
 			"type" => self::WHERE,
-			"datatype" => self::TEXT,
+			"datatype" => self::NUMBER,
 			"cond" => " = ?",
 			"value" => $value,
 		);
