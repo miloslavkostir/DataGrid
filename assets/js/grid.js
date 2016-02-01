@@ -1,5 +1,9 @@
 /**
- * @dependence  jQuery, jQuery UI - Datepicker and Autocomplete
+ * Base JS for DataGrid
+ * dependent on jQuery, jQuery UI - Datepicker and Autocomplete
+ * @authors		Jakub Holub, Miloslav Koštíř
+ * @copyright	Copyright (c) 2012 Jakub Holub
+ * @license     New BSD Licence
  */
  
 function init(){

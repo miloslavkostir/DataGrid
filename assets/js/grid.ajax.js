@@ -1,14 +1,10 @@
 /**
  * AJAX JS for DataGrid
- * @author		Miloslav Kostir
- * @dependence  jQuery 
- *  
- * Copied from holubj/NiftyGrid : 
- * @author		Jakub Holub
- * @copyright 	Copyright (c) 2012 Jakub Holub
- * @license     New BSD Licence 
- */ 
-  
+ * dependent on jQuery
+ * @authors		Jakub Holub, Miloslav Koštíř
+ * @copyright	Copyright (c) 2012 Jakub Holub
+ * @license     New BSD Licence
+ */
 var GridAjax = {
 
 	init: function(ajax){

@@ -1,3 +1,11 @@
+/**
+ * Base style for DataGrid
+ * dependent on Twitter Bootstrap 2 or 3 and jQueryUI
+ * @authors		Miloslav Koštíř
+ * @copyright	Copyright (c) 2016 Miloslav Koštíř
+ * @license     New BSD Licence
+ */
+
 .grid.table th, .grid.table td {
 	vertical-align: middle;
 }

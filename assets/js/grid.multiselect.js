@@ -1,3 +1,11 @@
+/**
+ * JS for multiselect filter in DataGrid
+ * dependent on jQuery
+ * @authors		Miloslav Koštíř
+ * @copyright	Copyright (c) 2016 Miloslav Koštíř
+ * @license     New BSD Licence
+ */
+
 // TODO this file can be class
 
 function createSelected(select, labelSelected)
