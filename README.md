@@ -14,10 +14,10 @@ Copy resources:
 * `assets/js/grid.js`
 
 to your public www dir and include them in template (usually in `@layout.latte`). grid.js needs jQuery and jQuery UI - download them from original source or use files from `assets/`.   
-For AJAX use `assets/js/grid.ajax.js`. You can use some third party ajax addon instead, e.g. [nette.ajax.js](http://addons.nette.org/vojtech-dobes/nette-ajax-js):
+For AJAX include `assets/js/grid.ajax.js`. You can use some third party ajax addon instead, e.g. [nette.ajax.js](http://addons.nette.org/vojtech-dobes/nette-ajax-js):
 
 ```js
-// just add selector .grid-ajax
+// with nette.ajax.js just add selector .grid-ajax
 $.nette.init(function (ajaxHandler) {
 	$('.grid-ajax').on('click', ajaxHandler);
 });
