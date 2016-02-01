@@ -80,7 +80,9 @@
 			<th n:foreach="$subGrids as $subGrid" class="grid-filter-form"></th>
 			<th n:foreach="$columns as $column" n:attr="class => array(grid-filter-form, $control->isSpecificFilterActive($column->name) ? grid-filter-form-active)">
 				{if $column->hasFilter()}
-					<div>{$control['gridForm'][$control->name]['filter'][$column->name]->getControl()->addClass('input-block-level form-control')}</div>
+					<div>
+						{$control['gridForm'][$control->name]['filter'][$column->name]->getControl()->addClass('input-block-level form-control'.($column->autocomplete ? ' grid-autocomplete' : ''))->addAttributes(array('data-link' => $column->autocomplete ? $control->link('autocomplete!') : FALSE, 'data-gridname' => $column->autocomplete ? $control->getGridPath() : FALSE, 'data-column' => $column->autocomplete ? $column->name : FALSE))}
+					</div>
 				{/if}
 			</th>
 			<th class="grid-filter-form">

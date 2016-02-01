@@ -209,11 +209,6 @@ class Column extends \Nette\Application\UI\PresenterComponent
 		}elseif($this->filterType != FilterCondition::TEXT){
 			throw new NiftyGrid\InvalidFilterException("Autocomplete can be used only with Text filter.");
 		}
-		$this->parent['gridForm'][$this->parent->name]['filter'][$this->name]->getControlPrototype()
-			->addClass("grid-autocomplete")
-			->addData("column", $this->name)
-			->addData("gridName", $this->parent->getGridPath())
-			->addData("link",$this->parent->link("autocomplete!"));
 
 		$this->autocomplete = TRUE;
 
