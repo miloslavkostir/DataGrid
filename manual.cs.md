@@ -130,33 +130,37 @@ Pro přidání řádkové akce slouží metoda addButton. První parametr je ná
 Text tlačítka nastavíme metodou addText. Dále můžeme nastavit css třídu metodou setClass, odkaz pomocí setLink, target pomocí setTarget a potvrzovací dialog pomocí setConfirmationDialog.
 
 ```php
-$self = $this;
-
-$this->addButton("delete", "Smazat")
-    ->setClass("icon-delete")
-    ->setLink(function($row) use ($self){return $self->link("delete!", $row['id']);})
+$this->addButton("delete", "Smazat položku")
+    ->setClass("btn btn-danger")
+    ->setText("Del")
+    ->setLink(function($row) {return $this->link("delete!", $row['id']);})
     ->setConfirmationDialog(function($row){return "Určitě chcete odstranit článek $row[title]?";});
 ```
+
 > **Poznámka:**   
 > Problém je s potvrzovacím dialogem (JS funkce confirm()), když nepotvrdíte akci, AJAX požadavek přesto proběhne.       
-> V souboru `assets/js/grid.ajax.js` je to jednoduše vyřešeno. Pokud místo něj používáte vlastní script, nezapomeňte tento problém ošetřit. Nejjednodužší řešení je vypnout AJAX u tlačítek s potvrzovacím dialogem.     
+> V souboru `assets/js/grid.ajax.js` je to jednoduše vyřešeno. Pokud místo něj používáte vlastní script, nezapomeňte tento problém ošetřit. Nejjednodužší řešení je vypnout AJAX (viz níže) u tlačítek s potvrzovacím dialogem.     
 
 Pokud bychom nechtěli na akci využít AJAX, například při odkazu na jiný Presenter, použijeme metodu setAjax(FALSE)
 
 ```php
-$this->addButton("edit", "Editovat")
-    ->setClass("edit")
-    ->setLink(function($row) use ($presenter){return $presenter->link("article:edit", $row['id']);})
+$this->addButton(...)
     ->setAjax(FALSE);
+```
+
+Text může být i HTML kód:   
+```php
+$this->addButton(...)
+    ->setText(Nette\Utils\Html::el('span')->setClass('glyphicon glyphicon-pencil'));  // <span class="glyphicon glyphicon-pencil"></span>
 ```
 
 Můžeme vytvořit i akci, která bude mit jinou funkci na základě hodnoty řádku. Například akce pro publikování/odpublikování článku.
 
 ```php
 $this->addButton("publish")
-    ->setLabel(function ($row) use ($self) {return $row['status'] === 1 ? "Odpublikovat" : "Publikovat";})
-    ->setLink(function($row) use ($self){return $row['status'] === 1 ? $self->link("unpublish!", $row['id']) : $self->link("publish!", $row['id']);})
-    ->setClass(function ($row) use ($self) {return $row['status'] === 1 ? "unpublish" : "publish";});
+	->setClass(function ($row) {return $row['status'] === 1 ? "btn btn-danger" : "btn btn-success";})
+    ->setText(function ($row) {return $row['status'] === 1 ? "Odpublikovat" : "Publikovat";})
+    ->setLink(function($row) {return $row['status'] === 1 ? $this->link("unpublish!", $row['id']) : $this->link("publish!", $row['id']);});
 ```
 
 A konečně zobrazení tlačítka můžeme řídit také pomocí anonymní funkce.
@@ -175,14 +179,14 @@ Pro přidání hromadné akce použijeme metodu addAction. V metodě setCallback
 
 ```php
 $this->addAction("publish","Publikovat")
-    ->setCallback(function($id) use ($self){return $self->handlePublish($id);});
+    ->setCallback(function($id) {return $this->publish($id);});
 ```
 
 Pro hromadnou akci můžeme také nastavit potvrzovací dialog.
 
 ```php
 $this->addAction("delete","Smazat")
-    ->setCallback(function($id) use ($self){return $self->handleDelete($id);})
+    ->setCallback(function($id) {return $this->delete($id);})
     ->setConfirmationDialog("Určitě chcete smazat všechny vybrané članky?");
 ```
 
@@ -193,21 +197,22 @@ Pro aktivaci řádkové editace je třeba přidat řádkovou akci za pomocí př
 
 ```php
 $this->addButton(Grid::ROW_FORM, "Rychlá editace")
-    ->setClass("fast-edit");
+    ->setClass("btn btn-primary")
+	->setText("Edit");
 ```
 
 Nyní je již aktivní tlačítko pro editaci, ale ještě nejsou žádné sloupce označené jako editovatelné. K tomu slouží metody, které se zapisují ke sloupci.
 
 ```php
 //textEditable slouží pro textové i číselné hodnoty
-setTextEditable();
-setDateEditable();
+$this->addColumn(...)->setTextEditable();
+$this->addColumn(...)->setDateEditable();
 //v případě selectEditable se grid automaticky pokusí nastavit defaultní hodnotu na základě pole $values a tím umožní editaci připojených tabulek
-setSelectEditable(array $values, $prompt)
-setBooleanEditable();
+$this->addColumn(...)->setSelectEditable(array $values, $prompt)
+$this->addColumn(...)->setBooleanEditable();
 
 //pro formátování hodnoty do editovatelného formuláře
-setFormRenderer($callback);
+$this->addColumn(...)->setFormRenderer($callback);
 ```
 
 Pro získání a uložení hodnot musíme nastavit callback v metodě configure pro formulář.
@@ -225,16 +230,18 @@ Globální akce
 Globální akce je v podstatě globální tlačítko s libovolným odkazem. Definuje se metodou addGlobalButton a použití je podobné, jako u řádkové akce `NiftyGrid\Components\Button`     
 
 ```php
-$this->addGlobalButton("export", "Exportovat")
-	->setClass('icon-export')
-	->setLink(function() {return $this->link("export!");})  // všimněte si, že anonymní funkce nemá parametr $row - je to globální akce, není závyslá na žádném řádku
-	->setTitle("Vyexportuje data do CSV");
+$this->addGlobalButton("export", "Vyexportuje data do CSV")
+	->setClass('btn btn-default')
+	->setText('Export')
+	->setLink(function() {return $this->link("export!");});  // všimněte si, že anonymní funkce nemá parametr $row - je to globální akce, není závyslá na žádném řádku;
 ```
 
 Nejčastější využití globální akce je pro přidání nového záznamu. Pokud je aktivovaná řádková editace, je přidání nového záznamu velice jednoduché - stačí jako první parametr předat předdefinovanou konstantu ADD_ROW:
 
 ```php
-	$this->addGlobalButton(self::ADD_ROW, "Přidat záznam");
+	$this->addGlobalButton(self::ADD_ROW, "Přidat záznam")
+		->setClass(...)
+		->setText(...);
 ```
 
 Filtrování dat

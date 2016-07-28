@@ -130,33 +130,37 @@ For adding row action use method addButton. First parameter is name of button, s
 Text of button you can define by method addText. Then you can define css class by method setClass, link by setLink, target by setTarget and confirmation dialog by setConfirmationDialog. 
 
 ```php
-$self = $this;
-
-$this->addButton("delete", "Remove")
-    ->setClass("icon-delete")
-    ->setLink(function($row) use ($self){return $self->link("delete!", $row['id']);})
+$this->addButton("delete", "Remove item")
+    ->setClass("btn btn-danger")
+    ->setText("Del")
+    ->setLink(function($row) {return $this->link("delete!", $row['id']);})
     ->setConfirmationDialog(function($row){return "Are you sure to remove article $row[title]?";});
 ```
+
 > **Notice:**   
 > There is a problem with confirmation dialog (JS function confirm()), if you discard confirmation dialog AJAX request will be proceed anyway.     
-> This is solved in `assets/js/grid.ajax.js` file. If you use your own script don't forget fix this problem. Easiest solution is disable AJAX on columns with confirmation dialog.                 
+> This is solved in `assets/js/grid.ajax.js` file. If you use your own script don't forget fix this problem. Easiest solution is disable AJAX (see below) on columns with confirmation dialog.                 
 
 If you don't use AJAX, e.g. redirect to another presenter, use method setAjax(FALSE).
 
 ```php
-$this->addButton("edit", "Edit")
-    ->setClass("edit")
-    ->setLink(function($row) use ($presenter){return $presenter->link("article:edit", $row['id']);})
+$this->addButton(...)
     ->setAjax(FALSE);
+```
+
+Text of button can be HTML code:   
+```php
+$this->addButton(...)
+    ->setText(Nette\Utils\Html::el('span')->setClass('glyphicon glyphicon-pencil'));  // <span class="glyphicon glyphicon-pencil"></span>
 ```
 
 You can create action with different functions depending on row value. For example for publish/unpublish article.
 
 ```php
 $this->addButton("publish")
-    ->setLabel(function ($row) use ($self) {return $row['status'] === 1 ? "Unpublish" : "Publish";})
-    ->setLink(function($row) use ($self){return $row['status'] === 1 ? $self->link("unpublish!", $row['id']) : $self->link("publish!", $row['id']);})
-    ->setClass(function ($row) use ($self) {return $row['status'] === 1 ? "unpublish" : "publish";});
+	->setClass(function ($row) {return $row['status'] === 1 ? "btn btn-danger" : "btn btn-success";})
+    ->setLabel(function ($row) {return $row['status'] === 1 ? "Unpublish" : "Publish";})
+    ->setLink(function($row) {return $row['status'] === 1 ? $this->link("unpublish!", $row['id']) : $this->link("publish!", $row['id']);});
 ```
 
 And display of button you can also control by anonymous function.
@@ -175,14 +179,14 @@ For adding mass action use method addAction. Parameter id in method setCallback 
 
 ```php
 $this->addAction("publish","Publish")
-    ->setCallback(function($id) use ($self){return $self->handlePublish($id);});
+    ->setCallback(function($id) {return $this->publish($id);});
 ```
 
 You can use confirmation dialog for mass action.
 
 ```php
 $this->addAction("delete","Remove")
-    ->setCallback(function($id) use ($self){return $self->handleDelete($id);})
+    ->setCallback(function($id) {return $this->delete($id);})
     ->setConfirmationDialog("Are you sure to remove all selected articles?");
 ```
 
@@ -193,21 +197,22 @@ To enable row editing you must use row action with predefined constant.
 
 ```php
 $this->addButton(Grid::ROW_FORM, "Fast edit")
-    ->setClass("fast-edit");
+    ->setClass("btn btn-primary")
+	->setText("Edit");
 ```
 
 Now the button for editing is active but no columns are marked as editable yet. For this use methods callable on columns.  
 
 ```php
 //textEditable is for text and number values
-setTextEditable();
-setDateEditable();
+$this->addColumn(...)->setTextEditable();
+$this->addColumn(...)->setDateEditable();
 //in case of selectEditable the grid automaticaly try set default value according to array $values and allows editing attached tables
-setSelectEditable(array $values, $prompt)
-setBooleanEditable();
+$this->addColumn(...)->setSelectEditable(array $values, $prompt)
+$this->addColumn(...)->setBooleanEditable();
 
 //for formating value in edit form
-setFormRenderer($callback);
+$this->addColumn(...)->setFormRenderer($callback);
 ```
 
 For getting and saving values you must set callback in method configure.
@@ -225,16 +230,18 @@ Global action
 Global action is basically global button with random link. It's defined by method addClobalButton and usage is similar like row action `NiftyGrid\Components\Button`.
 
 ```php
-$this->addGlobalButton("export", "Export")
-	->setClass('icon-export')
-	->setLink(function() {return $this->link("export!");})  // notice that anonymous function doesn't have parameter $row - that's global action, not depend on any row
-	->setTitle("Exports data to CSV file");
+$this->addGlobalButton("export", "Exports data to CSV file")
+	->setClass('btn btn-default')
+	->setText('Export')
+	->setLink(function() {return $this->link("export!");});  // notice that anonymous function doesn't have parameter $row - that's global action, not depend on any row
 ```
 
 The most frequent use is for adding new record to database. This is very simple if there is enabled row editing - just set predefined constant ADD_ROW as first parameter:
 
 ```php
-	$this->addGlobalButton(self::ADD_ROW, "Add new record");
+	$this->addGlobalButton(self::ADD_ROW, "Add new record")
+		->setClass(...)
+		->setText(...);
 ```
 
 Filtering
