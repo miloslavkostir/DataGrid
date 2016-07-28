@@ -973,7 +973,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 		$this->template->rows = $rows;
 		$this->template->primaryKey = $this->primaryKey;
 		if($this->hasActiveRowForm()){
-			$row = $rows[$this->activeRowForm];
+			$row = $rows[$this->activeRowForm]->toArray();
 			foreach($row as $name => $value){
 				if($this->columnExists($name) && !empty($this['columns']->components[$name]->formRenderer)){
 					$row[$name] = call_user_func($this['columns']->components[$name]->formRenderer, $row);
