@@ -381,10 +381,11 @@ class Column extends \Nette\Application\UI\PresenterComponent
 	 */
 	public function setSelectFilter($values, $prompt = "-----")
 	{
-		$this->parent['gridForm'][$this->parent->name]['filter']->addSelect($this->name, $this->label.":", $values);
+		$select = $this->parent['gridForm'][$this->parent->name]['filter']->addSelect($this->name, $this->label.":", $values);
 		if($prompt){
-			$this->parent['gridForm'][$this->parent->name]['filter'][$this->name]->setPrompt($prompt);
+			$select->setPrompt($prompt);
 		}
+		$select->setTranslator(NULL);
 		$this->filterType = FilterCondition::SELECT;
 
 		return $this;
@@ -400,7 +401,8 @@ class Column extends \Nette\Application\UI\PresenterComponent
 		foreach ($values as $key => $value) {
 			$vals[$key] = $value;
 		}
-		$this->parent['gridForm'][$this->parent->name]['filter']->addMultiSelect($this->name, $this->label.":", $vals, 1)->setAttribute('title', 'Pro více položek použijte CTRL');
+		$select = $this->parent['gridForm'][$this->parent->name]['filter']->addMultiSelect($this->name, $this->label.":", $vals, 1)->setAttribute('title', $this->parent->translator->translate('Form more items use CTRL'));
+		$select->setTranslator(NULL);
 		$this->filterType = FilterCondition::MULTISELECT;
 
 		return $this;
@@ -422,8 +424,12 @@ class Column extends \Nette\Application\UI\PresenterComponent
 	 * @param string $prompt
 	 * @return Column
 	 */
-	public function setBooleanFilter($values = array(0 => "Ne", 1 => "Ano"), $prompt = "-----")
+	public function setBooleanFilter($values = NULL, $prompt = "-----")
 	{
+		if ($values === NULL) {
+			$values[0] = $this->parent->translator->translate('No');
+			$values[1] = $this->parent->translator->translate('Yes');
+		}
 		$this->setSelectFilter($values, $prompt);
 		$this->filterType = FilterCondition::BOOLEAN;
 

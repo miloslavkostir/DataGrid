@@ -351,3 +351,35 @@ class CommentGridByArticleId extends Grid
 
 }
 ```
+
+Lokalization
+------------
+
+By default grid uses class `NiftyGrid\Components\Translator` which implements `Nette\Localization\ITranslator`.    
+For translation whole grid just copy and translate file `localization/empty.json`.       
+Then define path to this file by method `NiftyGrid\Components\Translator::setLocalization()`,
+where first parameter is path to file with translations or directly translated strings in array 
+or `Nette\Utils\ArrayHash` and second parameter is function to determine [plural forms](https://github.com/translate/l10n-guide/blob/master/docs/l10n/pluralforms.rst#plural-forms):  
+   
+```php
+public function __construct()
+{
+	parent::__construct();
+	
+    $this->getTranslator()->setLocalization('path/to/file.json', function($n) {
+        return (($n == 1) ? 0 : ($n >= 2 && $n <= 4 ? 1 : 2));
+    });
+}
+```
+> it's necessary to set translator as soon as possible, the best place is in `__construct()`  
+
+Default `NiftyGrid\Components\Translator` is possible to replace with another translator (class implements `Nette\Localization\ITranslator`) - also as soon as possible:  
+
+```php
+public function __construct(Nette\Localization\ITranslator $translator)
+{   
+	parent::__construct();
+
+    $this->setTranslator($translator);
+}
+```  

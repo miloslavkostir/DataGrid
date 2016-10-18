@@ -351,3 +351,35 @@ class CommentGridByArticleId extends Grid
 
 }
 ```
+
+Lokalizace
+----------
+
+Grid používá defaultně třídu `NiftyGrid\Components\Translator`, která implementuje rozhraní `Nette\Localization\ITranslator`. 
+Pro překlad celého gridu stačí nakopírovat někam a přeložit soubor `localization/empty.json`.   
+V gridu je pak potřeba zadat cestu k tomuto souboru pomocí metody `NiftyGrid\Components\Translator::setLocalization()`, 
+kde první parametr je cesta k souboru s překlady, nebo přímo přeložené řetězce v poli, respektive `Nette\Utils\ArrayHash` 
+a druhý parametr je funkce pro určení [plurálu](https://github.com/translate/l10n-guide/blob/master/docs/l10n/pluralforms.rst#plural-forms):
+   
+```php
+public function __construct()
+{
+	parent::__construct();
+	
+    $this->getTranslator()->setLocalization('cesta/k/souboru.json', function($n) {
+        return (($n == 1) ? 0 : ($n >= 2 && $n <= 4 ? 1 : 2));
+    });
+}
+```  
+> nastavení translatoru je potřeba udělat co nejdříve, ideálně v konstruktoru
+
+Defaultní `NiftyGrid\Components\Translator` je možné přepsat jakýmkoli translatorem (třídou implementující `Nette\Localization\ITranslator`), opět co nejdříve:
+
+```php
+public function __construct(Nette\Localization\ITranslator $translator)
+{   
+	parent::__construct();
+
+    $this->setTranslator($translator);
+}
+```  

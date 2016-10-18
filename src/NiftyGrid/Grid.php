@@ -84,6 +84,13 @@ abstract class Grid extends \Nette\Application\UI\Control
 	/** @var \Nette\Localization\ITranslator */
 	protected $translator;
 
+
+	public function __construct()
+	{
+		$this->translator = new Components\Translator;
+	}
+
+
 	/**
 	 * @param \Nette\Application\UI\Presenter $presenter
 	 */
@@ -573,10 +580,10 @@ abstract class Grid extends \Nette\Application\UI\Control
 		foreach($this->filter as $name => $value){
 			try{
 				if(!$this->columnExists($name)){
-					throw new UnknownColumnException("Neexistující sloupec $name");
+					throw new UnknownColumnException($this->translator->translate("Column %s doesn't exists", $name));
 				}
 				if(!$this['columns-'.$name]->hasFilter()){
-					throw new UnknownFilterException("Neexistující filtr pro sloupec $name");
+					throw new UnknownFilterException($this->translator->translate("Column %s doesn't have filter", $name));
 				}
 
 				$type = $this['columns-'.$name]->getFilterType();
@@ -591,10 +598,10 @@ abstract class Grid extends \Nette\Application\UI\Control
 						}
 						$filters[] = $filter;
 					}else{
-						throw new InvalidFilterException("Neplatný filtr");
+						throw new InvalidFilterException("Invalid filter");
 					}
 				}else{
-					throw new InvalidFilterException("Neplatný filtr");
+					throw new InvalidFilterException("Invalid filter");
 				}
 			}
 			catch(UnknownColumnException $e){
@@ -621,7 +628,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 				}
 				$this->dataSource->orderData($order[0], $order[1]);
 			}else{
-				throw new InvalidOrderException("Neplatné seřazení.");
+				throw new InvalidOrderException($this->translator->translate("Invalid sorting"));
 			}
 		}
 		catch(InvalidOrderException $e){
@@ -762,31 +769,33 @@ abstract class Grid extends \Nette\Application\UI\Control
 		$form = new \Nette\Application\UI\Form;
 		$form->method = "POST";
 		$form->getElementPrototype()->class[] = "grid-gridForm";
+		$form->setTranslator($this->translator);
 
 		$form->addContainer($this->name);
 
 		$form[$this->name]->addContainer("rowForm");
-		$form[$this->name]['rowForm']->addSubmit("send","Uložit");
+		$form[$this->name]['rowForm']->addSubmit("send","Save");
 		$form[$this->name]['rowForm']['send']->getControlPrototype()->addClass("grid-editable");
 
 		$form[$this->name]->addContainer("filter");
-		$form[$this->name]['filter']->addSubmit("send","Filtrovat")
+		$form[$this->name]['filter']->addSubmit("send","Filter")
 			->setValidationScope(FALSE);
 
 		$form[$this->name]->addContainer("action");
-		$form[$this->name]['action']->addSelect("action_name","Označené:");
-		$form[$this->name]['action']->addSubmit("send","Potvrdit")
+		$form[$this->name]['action']->addSelect("action_name","Selected:");
+		$form[$this->name]['action']->addSubmit("send","Confirm")
 			->setValidationScope(FALSE)
 			->getControlPrototype()
 			->addData("select", $form[$this->name]["action"]["action_name"]->getControl()->name);
 
 		$form[$this->name]->addContainer('perPage');
-		$form[$this->name]['perPage']->addSelect("perPage","Záznamů na stranu:", $this->perPageValues)
+		$form[$this->name]['perPage']->addSelect("perPage","Records per page:", $this->perPageValues)
+			->setTranslator(NULL)
 			->getControlPrototype()
 			->addClass("grid-changeperpage")
 			->addData("gridname", $this->getGridPath())
 			->addData("link", $this->link("changePerPage!"));
-		$form[$this->name]['perPage']->addSubmit("send","Ok")
+		$form[$this->name]['perPage']->addSubmit("send","OK")
 			->setValidationScope(FALSE)
 			->getControlPrototype()
 			->addClass("grid-perpagesubmit");
@@ -887,7 +896,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 			}
 			$subGrid = ($gridName == $this->name) ? FALSE : TRUE;
 			if(!count($rows)){
-				throw new NoRowSelectedException("Nebyl vybrán žádný záznam.");
+				throw new NoRowSelectedException($this->translator->translate('No row selected'));
 			}
 			if($subGrid){
 				call_user_func($this[$gridName]['actions']->components[$values['action_name']]->getCallback(), $rows);
@@ -900,9 +909,9 @@ abstract class Grid extends \Nette\Application\UI\Control
 		}
 		catch(NoRowSelectedException $e){
 			if($subGrid){
-				$this[$gridName]->flashMessage("Nebyl vybrán žádný záznam.","grid-error");
+				$this[$gridName]->flashMessage($e->getMessage(),"grid-error");
 			}else{
-				$this->flashMessage("Nebyl vybrán žádný záznam.","grid-error");
+				$this->flashMessage($e->getMessage(),"grid-error");
 			}
 			if (!$this->presenter->isAjax()) {
 				$this->redirect("this");

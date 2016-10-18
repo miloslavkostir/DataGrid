@@ -36,7 +36,7 @@
 					</div>
 					<div class="grid-upper-info pull-right">
 						<span class="grid-results">
-							celkem {$results} {($results == 1) ? "záznam" : (($results >= 2 && $results <= 4) ? "záznamy" : "záznamů")}{if $paginate} {if (boolean)$results}(Zobrazeno {$viewedFrom} až {$viewedTo}){/if}{/if}
+							{_ ['Total of %d record', 'Total of %d records'], $results}{if $paginate} {if (boolean)$results}({_'Displaying'} {$viewedFrom} - {$viewedTo}){/if}{/if}
 						</span>
 					</div>
 				</div>
@@ -65,15 +65,15 @@
 		
 		{* NAZEV SLOUPCE / SORTING *}
 		<tr>
-			<th n:if="$control->hasActionForm()" style="text-align:center; width: 16px;" class="grid-head-column"><input type="checkbox" class="grid-select-all" title="Označit/odznačit všechny záznamy"></th>
+			<th n:if="$control->hasActionForm()" style="text-align:center; width: 16px;" class="grid-head-column"><input type="checkbox" class="grid-select-all" title="{_'Select/deselect all'}"></th>
 			<th n:foreach="$subGrids as $subGrid" style="width: 26px;" class="grid-head-column"></th>
-			<th n:foreach="$columns as $column" n:attr="style => $column->width ? 'width: '.$column->width.';'" class="grid-head-column">{if $control->hasEnabledSorting() && $column->isSortable()}{var $order = ($control->order == $column->name.' ASC') ? " DESC" : " ASC"}<a n:href="this, 'order' => $column->name.$order" class="grid-ajax" title="Obrátit řazení">{$column->label}</a>{else}{$column->label}{/if}
+			<th n:foreach="$columns as $column" n:attr="style => $column->width ? 'width: '.$column->width.';'" class="grid-head-column">{if $control->hasEnabledSorting() && $column->isSortable()}{var $order = ($control->order == $column->name.' ASC') ? " DESC" : " ASC"}<a n:href="this, 'order' => $column->name.$order" class="grid-ajax" title="{_'Switch sorting'}">{$column->label}</a>{else}{$column->label}{/if}
 				<div class="grid-order pull-right" n:if="$column->isSortable() && $control->hasEnabledSorting()">
-					<a n:href="this, 'order' => $column->name.' ASC'" n:class="grid-ajax, grid-order-up, glyphicon, ($control->order && ($control->order == $column->name.' ASC')) ? 'grid-order-active-up icon-circle-arrow-up glyphicon-sort-by-alphabet' : 'icon-upload glyphicon-sort-by-alphabet'" title="Řadit vzestupně" n:attr="style => ($control->order && ($control->order == $column->name.' ASC')) ? 'color:#000000'"></a>  {*n:attr="style => array(/*'padding:2px;border-radius:2px', */($control->order && ($control->order == $column->name.' ASC')) ? 'color:#ffffff;background-color:#428bca;')"*}
-					<a n:href="this, 'order' => $column->name.' DESC'" n:class="grid-ajax, grid-order-down, glyphicon,($control->order && ($control->order == $column->name.' DESC')) ? 'grid-order-active-down icon-circle-arrow-down glyphicon-sort-by-alphabet-alt' : 'icon-download glyphicon-sort-by-alphabet-alt'" title="Řadit sestupně" n:attr="style => ($control->order && ($control->order == $column->name.' DESC')) ? 'color:#000000;'"></a>
+					<a n:href="this, 'order' => $column->name.' ASC'" n:class="grid-ajax, grid-order-up, glyphicon, ($control->order && ($control->order == $column->name.' ASC')) ? 'grid-order-active-up icon-circle-arrow-up glyphicon-sort-by-alphabet' : 'icon-upload glyphicon-sort-by-alphabet'" title="{_'Sort ascending'}" n:attr="style => ($control->order && ($control->order == $column->name.' ASC')) ? 'color:#000000'"></a>  {*n:attr="style => array(/*'padding:2px;border-radius:2px', */($control->order && ($control->order == $column->name.' ASC')) ? 'color:#ffffff;background-color:#428bca;')"*}
+					<a n:href="this, 'order' => $column->name.' DESC'" n:class="grid-ajax, grid-order-down, glyphicon,($control->order && ($control->order == $column->name.' DESC')) ? 'grid-order-active-down icon-circle-arrow-down glyphicon-sort-by-alphabet-alt' : 'icon-download glyphicon-sort-by-alphabet-alt'" title="{_'Sort descending'}" n:attr="style => ($control->order && ($control->order == $column->name.' DESC')) ? 'color:#000000;'"></a>
 				</div>
 			</th>
-			<th n:if="$control->hasButtons() || $control->hasFilterForm()" class="grid-head-column grid-akce-column">Akce</th>
+			<th n:if="$control->hasButtons() || $control->hasFilterForm()" class="grid-head-column grid-akce-column">{_'Action'}</th>
 		</tr>
 		
 		{* FILTER *}
@@ -91,9 +91,9 @@
 				<div class="btn-group">
 					{*$control['gridForm'][$control->name]['filter']['send']->getControl()->addClass('btn btn-info grid-ajax')*}
 					{var $_form = $control['gridForm'][$control->name]}
-					<button n:name="filter-send" class="{($class = $_form['filter']['send']->getControl()->class) !== NULL ? implode(' ', array_keys($class)).' '}btn btn-info grid-ajax">{$_form['filter']['send']->caption}</button>
+					<button n:name="filter-send" class="{($class = $_form['filter']['send']->getControl()->class) !== NULL ? implode(' ', array_keys($class)).' '}btn btn-info grid-ajax">{_$_form['filter']['send']->caption}</button>
 					{if $control->hasActiveFilter()}
-						<a n:if="$control->hasActiveFilter()" n:href="this, filter => NULL, paginator-page => NULL" title="Zrušit filtr" class="grid-filter-reset grid-ajax btn btn-info"><i class="icon-remove icon-white glyphicon glyphicon-remove"></i></a>
+						<a n:if="$control->hasActiveFilter()" n:href="this, filter => NULL, paginator-page => NULL" title="{_'Abort filter'}" class="grid-filter-reset grid-ajax btn btn-info"><i class="icon-remove icon-white glyphicon glyphicon-remove"></i></a>
 					{/if}
 				</div>
 			</th>
@@ -102,14 +102,10 @@
 		{* LIST OF FILTER *}
 		<tr n:if="$control->hasFilterForm() && $filters">
 			<td colspan="{$colsCount}">
-				<a n:if="$filters" n:href="this filter => NULL, paginator-page => NULL" title="Zrušit filtr"><span class="icon-remove glyphicon glyphicon-remove"></span></a> <strong>APLIKOVANÝ FILTR :</strong><br>
-				{if $filters}
-					{foreach $filters as $filter}
-						{$filter['label']} : {$filter['value']}<br>
-					{/foreach}
-				{else}
-					<em>Seznam není filtrován</em>
-				{/if}
+				<a n:if="$filters" n:href="this filter => NULL, paginator-page => NULL" title="{_'Abort filter'}"><span class="icon-remove glyphicon glyphicon-remove"></span></a> <strong>{_'APPLYING FILTER'} :</strong><br>			
+				{foreach $filters as $filter}
+					{$filter['label']} : {$filter['value']}<br>
+				{/foreach}
 			</td>
 		</tr>
 	</thead>
@@ -127,7 +123,7 @@
 			<td class="grid-row-cell grid-edited-cell">
 				<div class="btn-group">
 					{$control['gridForm'][$control->name]['rowForm']['send']->getControl()->addClass('btn btn-default')}
-					<a class="grid-rowForm-cancel grid-ajax btn btn-default" n:href="this" title="Zrušit editaci"><i class="glyphicon icon-remove glyphicon-remove"></i></a>
+					<a class="grid-rowForm-cancel grid-ajax btn btn-default" n:href="this" title="{_'Abort editing'}"><i class="glyphicon icon-remove glyphicon-remove"></i></a>
 				</div>
 			</td>
 		</tr>
@@ -151,7 +147,7 @@
 				{if $control->activeRowForm == $row[$primaryKey] && $control->isEditable()}
 					<div class="btn-group">
 						{$control['gridForm'][$control->name]['rowForm']['send']->getControl()->addClass('btn btn-default grid-ajax')}
-						<a class="grid-rowForm-cancel grid-ajax btn btn-default" n:href="this" title="Zrušit editaci"><i class="glyphicon icon-remove glyphicon-remove"></i></a>
+						<a class="grid-rowForm-cancel grid-ajax btn btn-default" n:href="this" title="{_'Abort editing'}"><i class="glyphicon icon-remove glyphicon-remove"></i></a>
 					</div>
 					{$control['gridForm'][$control->name]['rowForm'][$primaryKey]->getControl()}									
 				{else}
@@ -183,12 +179,12 @@
 	<span n:if="$control->hasActionForm()" class="grid-action-box inline-form form-inline pull-left">
 		{$control['gridForm'][$control->name]['action']['action_name']->label}
 		{$control['gridForm'][$control->name]['action']['action_name']->getControl()->addClass('form-control')}
-		<button n:name="action-send" class="{($class = $_form['action']['send']->getControl()->class) !== NULL  ? implode(' ', array_keys($class)).' '}btn btn-default grid-ajax">{$_form['action']['send']->caption}</button>
+		<button n:name="action-send" class="{($class = $_form['action']['send']->getControl()->class) !== NULL  ? implode(' ', array_keys($class)).' '}btn btn-default grid-ajax">{_$_form['action']['send']->caption}</button>
 	</span>
 	<span n:if="$paginate" class="grid-perPage form-inline pull-right">
 		{$control['gridForm'][$control->name]['perPage']['perPage']->label}
 		{$control['gridForm'][$control->name]['perPage']['perPage']->getControl()->addClass('form-control input-small')}
-		<button n:name="$control['gridForm'][$control->name]['perPage']['send']" class="grid-perpagesubmit button btn btn-info grid-ajax">{$control['gridForm'][$control->name]['perPage']['send']->caption}</button>
+		<button n:name="$control['gridForm'][$control->name]['perPage']['send']" class="grid-perpagesubmit button btn btn-info grid-ajax">{_$control['gridForm'][$control->name]['perPage']['send']->caption}</button>
 	</span>
 </div>
 
