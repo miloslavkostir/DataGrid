@@ -924,7 +924,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 	 */
 	public function filterFormSubmitted($values)
 	{
-		unset($values['do']);
+		unset($values['do'], $values['_do']);
 		foreach($values as $gridName => $grid){
 			$isSubGrid = ($gridName == $this->name) ? FALSE : TRUE;
 			foreach($grid['filter'] as $name => $value){
