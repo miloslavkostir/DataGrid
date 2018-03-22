@@ -38,6 +38,9 @@ class GlobalButton extends \Nette\Application\UI\PresenterComponent
 	/** @var callback|string */
 	private $show = TRUE;
 
+	/** @var array */
+	private $attributes = [];
+
 
 	/**
 	 * @param string $label
@@ -228,6 +231,47 @@ class GlobalButton extends \Nette\Application\UI\PresenterComponent
 	}
 
 
+	/**
+	 * @param string $attr
+	 * @param callback|mixed $value
+	 * @return Button
+	 */
+	public function addAttribute($attr, $value)
+	{
+		$this->attributes[$attr] = $value;
+
+		return $this;
+	}
+
+
+	/**
+	 * @return callback|mixed
+	 */
+	public function getAttribute($attr)
+	{
+		if (!array_key_exists($attr, $this->attributes)) {
+			return NULL;
+		}
+		if (is_callable($this->attributes[$attr])){
+			return call_user_func($this->attributes[$attr]);
+		}
+		return $this->attributes[$attr];
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getAttributes()
+	{
+		$attrs = [];
+		foreach (array_keys($this->attributes) as $attr) {
+			$attrs[$attr] = $this->getAttribute($attr);
+		}
+		return $attrs;
+	}
+
+
 	public function render()
 	{
 		if (!$this->getShow()) {
@@ -242,6 +286,8 @@ class GlobalButton extends \Nette\Application\UI\PresenterComponent
 			->addClass("grid-global-button")
 			->setTitle($this->getLabel())
 			->setTarget($this->getTarget());
+
+		$el->addAttributes($this->getAttributes());
 
 		if ($this->ajax) {
 			$el->addClass("grid-ajax");
