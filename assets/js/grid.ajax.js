@@ -71,6 +71,8 @@ var GridAjax = {
 						$.post(this.action, $(this).serialize()+"&"+$(button).attr("name")+"="+$(button).val());
 					}
 				}
+				$("td input:checkbox.grid-action-checkbox").attr('checked', false);
+				
 			}else{
 				event.preventDefault();
 				$.post(this.action, $(this).serialize()+"&"+$(button).attr("name")+"="+$(button).val());
