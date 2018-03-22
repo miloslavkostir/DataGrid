@@ -25,7 +25,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 	public $order;
 
 	/** @persistent int */
-	public $perPage;
+	public $perPage = 20;
 
 	/** @persistent int */
 	public $activeSubGridId;
@@ -308,7 +308,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 		}
 		$globalButton = new Components\GlobalButton($this['globalButtons'], $name);
 		if($name == self::ADD_ROW){
-			$globalButton->setLink($this->link("addRow!"));
+			$globalButton->setLink($this->link("showRowForm!"));
 		}
 		$globalButton->setLabel($label);
 		return $globalButton;
@@ -741,6 +741,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 		}
 	}
 
+	/** @deprecated */
 	public function handleAddRow()
 	{
 		$this->showAddRow = TRUE;
@@ -749,9 +750,24 @@ abstract class Grid extends \Nette\Application\UI\Control
 	/**
 	 * @param int $id
 	 */
-	public function handleShowRowForm($id)
+	public function handleShowRowForm($id = NULL)
 	{
-		$this->activeRowForm = $id;
+		if ($id) {
+			$this->activeRowForm = $id;
+		} else {
+			$this->showAddRow = TRUE;
+		}
+	}
+
+	public function handleCloseRowForm()
+	{
+		$this->showAddRow = FALSE;
+		$this->activeRowForm = NULL;
+	}
+
+	public function handleRemoveFilter()
+	{
+		$this->filter = [];
 	}
 
 	/**
@@ -768,9 +784,10 @@ abstract class Grid extends \Nette\Application\UI\Control
 	 */
 	public function assignCheckboxToRow($id)
 	{
-		$this['gridForm'][$this->name]['action']->addCheckbox("row_".$id);
-		$this['gridForm'][$this->name]['action']["row_".$id]->getControlPrototype()->class[] = "grid-action-checkbox";
-		return $this['gridForm'][$this->name]['action']["row_".$id]->getControl();
+		return $this['gridForm'][$this->name]['action']->addCheckbox("row_".$id)
+			->setAttribute('class', 'grid-action-checkbox')
+			->setValue(NULL)
+			->getControl();
 	}
 
 	protected function createComponentGridForm()

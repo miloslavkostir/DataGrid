@@ -58,7 +58,7 @@
 			<th colspan="{$colsCount}">
 				<div class="alert alert-error alert-danger">
 					<button type="button" class="close grid-flash-hide not-ajax" data-dismiss="alert">&times;</button>
-					<span>{$flash->message}</span>
+					<span>{$error}</span>
 				</div>
 			</th>
 		</tr>
@@ -93,7 +93,7 @@
 					{var $_form = $control['gridForm'][$control->name]}
 					<button n:name="filter-send" class="{($class = $_form['filter']['send']->getControl()->class) !== NULL ? implode(' ', array_keys($class)).' '}btn btn-info grid-ajax">{_$_form['filter']['send']->caption}</button>
 					{if $control->hasActiveFilter()}
-						<a n:if="$control->hasActiveFilter()" n:href="this, filter => NULL, paginator-page => NULL" title="{_'Abort filter'}" class="grid-filter-reset grid-ajax btn btn-info"><i class="icon-remove icon-white glyphicon glyphicon-remove"></i></a>
+						<a n:if="$control->hasActiveFilter()" n:href="removeFilter!" title="{_'Abort filter'}" class="grid-filter-reset grid-ajax btn btn-info"><i class="icon-remove icon-white glyphicon glyphicon-remove"></i></a>
 					{/if}
 				</div>
 			</th>
@@ -102,7 +102,7 @@
 		{* LIST OF FILTER *}
 		<tr n:if="$control->hasFilterForm() && $filters">
 			<td colspan="{$colsCount}">
-				<a n:if="$filters" n:href="this filter => NULL, paginator-page => NULL" title="{_'Abort filter'}"><span class="icon-remove glyphicon glyphicon-remove"></span></a> <strong>{_'APPLYING FILTER'} :</strong><br>			
+				<a n:if="$filters" n:href="removeFilter!" title="{_'Abort filter'}" class="grid-ajax"><span class="icon-remove glyphicon glyphicon-remove"></span></a> <strong>{_'APPLYING FILTER'} :</strong><br>
 				{foreach $filters as $filter}
 					{$filter['label']} : {$filter['value']}<br>
 				{/foreach}
@@ -111,7 +111,7 @@
 	</thead>
 	<tbody>
 		
-		{* EDITACE *}
+		{* PRIDANI RADKU *}
 		<tr n:if="$control->showAddRow && $control->isEditable()">
 			<td n:if="$control->hasActionForm()" class="grid-row-cell grid-edited-cell"></td>
 			<td n:if="count($subGrids)" colspan="count($subGrids)" class="grid-row-cell grid-edited-cell"></td>
@@ -123,7 +123,7 @@
 			<td class="grid-row-cell grid-edited-cell">
 				<div class="btn-group">
 					{$control['gridForm'][$control->name]['rowForm']['send']->getControl()->addClass('btn btn-default')}
-					<a class="grid-rowForm-cancel grid-ajax btn btn-default" n:href="this" title="{_'Abort editing'}"><i class="glyphicon icon-remove glyphicon-remove"></i></a>
+					<a class="grid-rowForm-cancel grid-ajax btn btn-default" n:href="closeRowForm!" title="{_'Abort editing'}"><i class="glyphicon icon-remove glyphicon-remove"></i></a>
 				</div>
 			</td>
 		</tr>
@@ -147,7 +147,7 @@
 				{if $control->activeRowForm == $row[$primaryKey] && $control->isEditable()}
 					<div class="btn-group">
 						{$control['gridForm'][$control->name]['rowForm']['send']->getControl()->addClass('btn btn-default grid-ajax')}
-						<a class="grid-rowForm-cancel grid-ajax btn btn-default" n:href="this" title="{_'Abort editing'}"><i class="glyphicon icon-remove glyphicon-remove"></i></a>
+						<a class="grid-rowForm-cancel grid-ajax btn btn-default" n:href="closeRowForm!" title="{_'Abort editing'}"><i class="glyphicon icon-remove glyphicon-remove"></i></a>
 					</div>
 					{$control['gridForm'][$control->name]['rowForm'][$primaryKey]->getControl()}									
 				{else}
