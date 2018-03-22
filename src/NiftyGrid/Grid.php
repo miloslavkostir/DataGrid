@@ -87,6 +87,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 
 	public function __construct()
 	{
+		parent::__construct();
 		$this->translator = new Components\Translator;
 	}
 
@@ -97,6 +98,14 @@ abstract class Grid extends \Nette\Application\UI\Control
 	protected function attached($presenter)
 	{
 		parent::attached($presenter);
+
+		if (empty($this->translator)) {
+			// Must call parent::__construct(). Benevolent yet
+			//trigger_error('Method '.get_class($this).'::__construct() or its descendant doesn\'t call parent::__construct().', E_USER_NOTICE);
+			//throw new Nette\InvalidStateException('Method '.get_class($this).'::__construct() or its descendant doesn\'t call parent::__construct().');
+			$this->translator = new Components\Translator;
+		}
+		
 		if(!$presenter instanceof Presenter) return;
 
 		$this->addComponent(New \Nette\ComponentModel\Container(), "columns");
