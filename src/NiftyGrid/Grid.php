@@ -101,8 +101,8 @@ abstract class Grid extends \Nette\Application\UI\Control
 
 		if (empty($this->translator)) {
 			// Must call parent::__construct(). Benevolent yet
-			//trigger_error('Method '.get_class($this).'::__construct() or its descendant doesn\'t call parent::__construct().', E_USER_NOTICE);
-			//throw new Nette\InvalidStateException('Method '.get_class($this).'::__construct() or its descendant doesn\'t call parent::__construct().');
+			trigger_error('Translator is not set. Method '.get_class($this).'::__construct() or its descendant may not call parent::__construct().', E_USER_NOTICE);
+			//throw new Nette\InvalidStateException('Translator is not set. Method '.get_class($this).'::__construct() or its descendant may not call parent::__construct().');
 			$this->translator = new Components\Translator;
 		}
 		
