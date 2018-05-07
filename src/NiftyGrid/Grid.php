@@ -261,7 +261,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 		if(!empty($this['columns']->components[$name])){
 			throw new DuplicateColumnException("Column $name already exists.");
 		}
-		$column = new Components\Column($this['columns'], $name);
+		$this['columns']->addComponent(($column = new Components\Column), $name);
 		$column->setName($name)
 			->setLabel($label)
 			->setWidth($width)
@@ -282,7 +282,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 		if(!empty($this['buttons']->components[$name])){
 			throw new DuplicateButtonException("Button $name already exists.");
 		}
-		$button = new Components\Button($this['buttons'], $name);
+		$this['buttons']->addComponent(($button = new Components\Button), $name);
 		if($name == self::ROW_FORM){
 			$self = $this;
 			$primaryKey = $this->primaryKey;
@@ -306,7 +306,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 		if(!empty($this['globalButtons']->components[$name])){
 			throw new DuplicateGlobalButtonException("Global button $name already exists.");
 		}
-		$globalButton = new Components\GlobalButton($this['globalButtons'], $name);
+		$this['globalButtons']->addComponent(($globalButton = new Components\GlobalButton), $name);
 		if($name == self::ADD_ROW){
 			$globalButton->setLink($this->link("showRowForm!"));
 		}
@@ -325,7 +325,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 		if(!empty($this['actions']->components[$name])){
 			throw new DuplicateActionException("Action $name already exists.");
 		}
-		$action = new Components\Action($this['actions'], $name);
+		$this['actions']->addComponent(($action = new Components\Action), $name);
 		$action->setName($name)
 			->setLabel($label);
 
@@ -345,7 +345,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 		}
 		$self = $this;
 		$primaryKey = $this->primaryKey;
-		$subGrid = new Components\SubGrid($this['subGrids'], $name);
+		$this['subGrids']->addComponent(($subGrid = new Components\SubGrid), $name);
 		$subGrid->setName($name)
 			->setLabel($label);
 		if($this->activeSubGridName == $name){
@@ -828,7 +828,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 
 		$form->setTranslator($this->getTranslator());
 
-		$form->onSuccess[] = callback($this, "processGridForm");
+		$form->onSuccess[] = [$this, "processGridForm"];
 
 		return $form;
 	}

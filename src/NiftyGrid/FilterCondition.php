@@ -13,7 +13,7 @@ use Nette\Utils\Strings;
 /**
  * @author     Jakub Holub
  */
-class FilterCondition extends \Nette\Object
+class FilterCondition
 {
 	/* filter types */
 	const TEXT = "text";

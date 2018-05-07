@@ -36,6 +36,9 @@ class Column extends \Nette\Application\UI\PresenterComponent
 	public $renderCallback;
 
 	/** @var callback */
+	public $renderer;
+
+	/** @var callback */
 	public $formRenderer;
 
 	/** @var callback|string */
@@ -427,8 +430,8 @@ class Column extends \Nette\Application\UI\PresenterComponent
 	public function setBooleanFilter($values = NULL, $prompt = "-----")
 	{
 		if ($values === NULL) {
-			$values[0] = $this->parent->translator->translate('No');
-			$values[1] = $this->parent->translator->translate('Yes');
+			$values[0] = $this->parent->getTranslator()->translate('No');
+			$values[1] = $this->parent->getTranslator()->translate('Yes');
 		}
 		$this->setSelectFilter($values, $prompt);
 		$this->filterType = FilterCondition::BOOLEAN;
