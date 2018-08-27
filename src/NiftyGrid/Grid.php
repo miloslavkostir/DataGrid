@@ -594,6 +594,17 @@ abstract class Grid extends \Nette\Application\UI\Control
 				if(!$this['columns-'.$name]->hasFilter()){
 					throw new UnknownFilterException($this->translator->translate("Column %s doesn't have filter", $name));
 				}
+				$filterControl = $this['gridForm'][$this->name]['filter'][$name];
+				if($filterControl instanceof Nette\Forms\Controls\ChoiceControl && !array_key_exists($value, $filterControl->getItems())){
+					throw new UnknownFilterException($this->translator->translate("Column %s doesn't contains value %s", [$this['columns']->getComponent($name)->label, $value]));
+				}
+				if($filterControl instanceof Nette\Forms\Controls\MultiChoiceControl){
+					$value = (array) $value;
+					if ($diff = array_diff($value, array_keys($filterControl->getItems()))) {
+
+						throw new UnknownFilterException($this->translator->translate("Column %s doesn't contains values %s", [$this['columns']->getComponent($name)->label, implode(',', $diff)]));
+					}
+				}
 
 				$type = $this['columns-'.$name]->getFilterType();
 				$filter = FilterCondition::prepareFilter($value, $type);
@@ -614,9 +625,11 @@ abstract class Grid extends \Nette\Application\UI\Control
 				}
 			}
 			catch(UnknownColumnException $e){
+				unset($this->filter[$name]);
 				$this->flashMessage($e->getMessage(), "grid-error");
 			}
 			catch(UnknownFilterException $e){
+				unset($this->filter[$name]);
 				$this->flashMessage($e->getMessage(), "grid-error");
 			}
 		}

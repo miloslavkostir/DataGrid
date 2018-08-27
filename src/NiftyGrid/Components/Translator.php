@@ -65,7 +65,7 @@ class Translator implements ITranslator
 					: sprintf($message[$plural], $count);
 
 		} else {
-			return isset($this->data[$message]) ? sprintf($this->data[$message], $count) : sprintf($message, $count);
+			return isset($this->data[$message]) ? vsprintf($this->data[$message], $count) : vsprintf($message, $count);
 
 		}
 	}

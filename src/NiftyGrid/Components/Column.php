@@ -388,6 +388,7 @@ class Column extends \Nette\Application\UI\PresenterComponent
 		if($prompt){
 			$select->setPrompt($prompt);
 		}
+		$select->checkAllowedValues = false;
 		$select->setTranslator(NULL);
 		$this->filterType = FilterCondition::SELECT;
 
@@ -404,7 +405,8 @@ class Column extends \Nette\Application\UI\PresenterComponent
 		foreach ($values as $key => $value) {
 			$vals[$key] = $value;
 		}
-		$select = $this->parent['gridForm'][$this->parent->name]['filter']->addMultiSelect($this->name, $this->label.":", $vals, 1)->setAttribute('title', $this->parent->translator->translate('Form more items use CTRL'));
+		$select = $this->parent['gridForm'][$this->parent->name]['filter']->addMultiSelect($this->name, $this->label.":", $vals, 1)->setHtmlAttribute('title', $this->parent->getTranslator()->translate('For more items use CTRL'));
+		$select->checkAllowedValues = false;
 		$select->setTranslator(NULL);
 		$this->filterType = FilterCondition::MULTISELECT;
 
