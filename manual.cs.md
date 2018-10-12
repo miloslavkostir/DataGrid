@@ -220,7 +220,7 @@ Pro získání a uložení hodnot musíme nastavit callback v metodě configure 
 ```php
 $this->setRowFormCallback(function($values){
     //db update, flash message, ..
-);
+});
 ```
 
 Globální akce

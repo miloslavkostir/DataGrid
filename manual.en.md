@@ -220,7 +220,7 @@ For getting and saving values you must set callback in method configure.
 ```php
 $this->setRowFormCallback(function($values){
     //db update, flash message, ..
-);
+});
 ```
 
 Global action
