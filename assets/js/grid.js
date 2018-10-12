@@ -120,18 +120,22 @@ function init(){
 	setDatepicker();
 
 
-	// Editable controlling (ENTER + doubleclick)
-	$("input.grid-editable").on("keypress", function(e) {
-		if (e.keyCode == '13') {
+	// Row edit - close on ESC	
+	$("input.grid-editable, textarea.grid-editable").on("keyup", function(e) {
+		if (e.key === 'Escape') {
 			e.preventDefault();
-			$("input[type=submit].grid-editable").click();
+		 	$(".grid-rowForm-cancel").click();
 		}
 	});
 
+	// Row edit - init on doubleclick)
 	$("table.grid tbody tr:not(.grid-subgrid-row) td.grid-data-cell").on("dblclick", function(e) {
-		$(this).parent().find("a.grid-editable:first").click();
+		$(this).parent().find("a.grid-editable:first").click();	
 	});
-}   
+
+	// Row edit - focus on first text input	
+	$("input.grid-editable[type=text]:first").focus();
+}
  
 
 $(function(){
