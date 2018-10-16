@@ -115,7 +115,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 		$this->addComponent(New \Nette\ComponentModel\Container(), "subGrids");
 
 		if($presenter->isAjax()){
-			$this->invalidateControl();
+			$this->redrawControl();
 		}
 
 		$this->configure($presenter);
@@ -354,8 +354,11 @@ abstract class Grid extends \Nette\Application\UI\Control
 				return $row[$primaryKey] == $self->activeSubGridId ? "grid-subgrid-close" : "grid-subgrid-open";
 			});
 			$subGrid->setLink(function($row) use ($self, $name, $primaryKey){
-				$link = $row[$primaryKey] == $self->activeSubGridId ? array("activeSubGridId" => NULL, "activeSubGridName" => NULL) : array("activeSubGridId" => $row[$primaryKey], "activeSubGridName" => $name);
-				return $self->link("this", $link);
+				if ($row[$primaryKey] == $self->activeSubGridId) {
+					return $self->link('closeSubGrid!');
+				} else {
+					return $self->link("this", array("activeSubGridId" => $row[$primaryKey], "activeSubGridName" => $name));
+				}
 			});
 		}
 		else{
@@ -783,6 +786,12 @@ abstract class Grid extends \Nette\Application\UI\Control
 		$this->filter = [];
 	}
 
+	public function handleCloseSubgrid()
+	{
+		$this->activeSubGridId = NULL;
+		$this->activeSubGridName = NULL;
+	}
+
 	/**
 	 * @param $callback
 	 */
@@ -825,15 +834,15 @@ abstract class Grid extends \Nette\Application\UI\Control
 		$form[$this->name]['action']->addSubmit("send","Confirm")
 			->setValidationScope(FALSE)
 			->getControlPrototype()
-			->addData("select", $form[$this->name]["action"]["action_name"]->getControl()->name);
+			->data("select", $form[$this->name]["action"]["action_name"]->getControl()->name);
 
 		$form[$this->name]->addContainer('perPage');
 		$form[$this->name]['perPage']->addSelect("perPage","Records per page:", $this->perPageValues)
 			->setTranslator(NULL)
 			->getControlPrototype()
 			->addClass("grid-changeperpage")
-			->addData("gridname", $this->getGridPath())
-			->addData("link", $this->link("changePerPage!"));
+			->data("gridname", $this->getGridPath())
+			->data("link", $this->link("changePerPage!"));
 		$form[$this->name]['perPage']->addSubmit("send","OK")
 			->setValidationScope(FALSE)
 			->getControlPrototype()

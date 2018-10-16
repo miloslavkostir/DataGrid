@@ -14,10 +14,8 @@
 
 {snippet}
 
-{if !$control->isSubGrid}
-{$control['gridForm']->render('begin')}
-{/if} 
-    
+<form n:name="$control['gridForm']" n:class="implode(', ', $control['gridForm']->getElementPrototype()->class)" n:tag-if="!$control->isSubGrid">
+
 <table n:attr="style => $control->width ? 'width: '.$control->width.'; min-width: '.$control->width.';'" class="grid table table-striped table-bordered table-hover">
 	<thead>
 		{* GRID NAME *}
@@ -89,9 +87,7 @@
 			</th>
 			<th class="grid-filter-form">
 				<div class="btn-group">
-					{*$control['gridForm'][$control->name]['filter']['send']->getControl()->addClass('btn btn-info grid-ajax')*}
-					{var $_form = $control['gridForm'][$control->name]}
-					<button n:name="filter-send" class="{($class = $_form['filter']['send']->getControl()->class) !== NULL ? implode(' ', array_keys($class)).' '}btn btn-info grid-ajax">{_$_form['filter']['send']->caption}</button>
+					<button n:name="$control['gridForm'][$control->name]['filter']['send']" class="{($class = $control['gridForm'][$control->name]['filter']['send']->getControl()->class) !== NULL ? implode(' ', array_keys($class)).' '}btn btn-info grid-ajax">{_$control['gridForm'][$control->name]['filter']['send']->caption}</button>
 					{if $control->hasActiveFilter()}
 						<a n:if="$control->hasActiveFilter()" n:href="removeFilter!" title="{_'Abort filter'}" class="grid-filter-reset grid-ajax btn btn-info"><i class="icon-remove icon-white glyphicon glyphicon-remove"></i></a>
 					{/if}
@@ -179,7 +175,7 @@
 	<span n:if="$control->hasActionForm()" class="grid-action-box inline-form form-inline pull-left">
 		{$control['gridForm'][$control->name]['action']['action_name']->label}
 		{$control['gridForm'][$control->name]['action']['action_name']->getControl()->addClass('form-control')}
-		<button n:name="action-send" class="{($class = $_form['action']['send']->getControl()->class) !== NULL  ? implode(' ', array_keys($class)).' '}btn btn-default grid-ajax">{_$_form['action']['send']->caption}</button>
+		<button n:name="$control['gridForm'][$control->name]['action']['send']" class="{($class = $control['gridForm'][$control->name]['action']['send']->getControl()->class) !== NULL  ? implode(' ', array_keys($class)).' '}btn btn-default grid-ajax">{_$control['gridForm'][$control->name]['action']['send']->caption}</button>
 	</span>
 	<span n:if="$paginate" class="grid-perPage form-inline pull-right">
 		{$control['gridForm'][$control->name]['perPage']['perPage']->label}
@@ -192,9 +188,7 @@
 	{control paginator}
 </div>
 
-{if !$control->isSubGrid}
-{$control['gridForm']->render('end')}
-{/if}
+</form>
 
 <script>
 	$(function () {

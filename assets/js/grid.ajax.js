@@ -6,8 +6,8 @@
  * @license     New BSD Licence
  */
 var GridAjax = {
-
-	init: function(ajax){
+	
+	init: function(){ 
 		
 		// Setup
 		$.ajaxSetup({
@@ -24,19 +24,19 @@ var GridAjax = {
 		});
 	
 		// AJAX without confirmation
-		$('.grid a.grid-ajax:not(.grid-confirm)').on('click', function (event) {
+		$('body').on('click', '.grid a.grid-ajax:not(.grid-confirm)', function (event) {
 			event.preventDefault();
 			$.get(this.href);
 		});
 		
 		// Confirmation without AJAX	
-		$('.grid a.grid-confirm:not(.grid-ajax)').on('click', function (event) {
+		$('body').on('click', '.grid a.grid-confirm:not(.grid-ajax)', function (event) {
 			var answer = confirm($(this).data("grid-confirm"));
 			return answer;
 		});
 		
 		// AJAX with confirmation	
-		$('.grid a.grid-confirm.grid-ajax').on('click', function (event) {
+		$('body').on('click', '.grid a.grid-confirm.grid-ajax', function (event) {
 			event.preventDefault();
 			var answer = confirm($(this).data("grid-confirm"));
 			if (answer) {
@@ -45,11 +45,11 @@ var GridAjax = {
 		}); 
 
 		// Form AJAX
-		$(".grid-gridForm").find("*[type=submit]").on("click", function(){
+		$('body').on('click', ".grid-gridForm *[type=submit]", function(){
 			$(this).addClass("grid-gridForm-clickedSubmit");
 		});
 	
-		$(".grid-gridForm").on("submit", function(event){
+		$('body').on("submit", ".grid-gridForm", function(event){
 			var button = $(".grid-gridForm-clickedSubmit");
 			$(button).removeClass("grid-gridForm-clickedSubmit");
 			if($(button).data("select")){
@@ -82,14 +82,6 @@ var GridAjax = {
 	}
 }
 
-$(function(){
-	
-	GridAjax.init(false);
-	  	
-	$(this).ajaxStop(function(){
-		GridAjax.init(true);
-	});
-	
+$(function(){	
+	GridAjax.init();
 }); 
-
-

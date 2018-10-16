@@ -299,7 +299,7 @@ class GlobalButton extends \Nette\Application\UI\PresenterComponent
 
 		if ($this->hasConfirmationDialog()) {
 			$el->addClass("grid-confirm")
-				->addData("grid-confirm", $this->getConfirmationDialog());
+				->data("grid-confirm", $this->getConfirmationDialog());
 		}
 	
 		echo $el;

@@ -39,6 +39,9 @@ class SubGrid extends \Nette\Application\UI\PresenterComponent
 	/** @var callback|string */
 	public $show = TRUE;
 
+	/** @var Grid */
+	public $grid;
+
 	/**
 	 * @param string $name
 	 * @return SubGrid
@@ -226,7 +229,7 @@ class SubGrid extends \Nette\Application\UI\PresenterComponent
 			->addClass($this->getClass($row))
 			->addClass("grid-button")
 			->setTitle($this->getLabel($row))
-			->add('<span class="glyphicon glyphicon-'.(preg_match('/open/', $this->getClass($row)) ? 'plus' : 'minus').' icon-'.(preg_match('/open/', $this->getClass($row)) ? 'plus' : 'minus').'"></span>');
+			->addHtml('<span class="glyphicon glyphicon-'.(preg_match('/open/', $this->getClass($row)) ? 'plus' : 'minus').' icon-'.(preg_match('/open/', $this->getClass($row)) ? 'plus' : 'minus').'"></span>');
 
 		if($this->ajax){
 			$el->addClass("grid-ajax");
