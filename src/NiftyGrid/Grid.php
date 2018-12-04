@@ -148,6 +148,11 @@ abstract class Grid extends \Nette\Application\UI\Control
 			}
 			$this->dataSource->orderData($order[0], isset($order[1]) ? $order[1] : 'ASC');
 		}
+
+		// Check existence of NiftyGrid\DataSource\IDataSource::rowToArray()
+		if (!method_exists($this->dataSource, 'rowToArray')) {
+			trigger_error('Your data source ' . get_class($this->dataSource) . " doesn't have method rowToArray(). In higher version this will trigger fatal error. Please, implement it (see NiftyGrid\DataSource\NDataSource).", E_USER_WARNING);
+		}
 	}
 
 	abstract protected function configure($presenter);
@@ -1039,7 +1044,13 @@ abstract class Grid extends \Nette\Application\UI\Control
 		$this->template->rows = $rows;
 		$this->template->primaryKey = $this->primaryKey;
 		if($this->hasActiveRowForm()){
-			$row = $rows[$this->activeRowForm]->toArray();
+			$row = $rows[$this->activeRowForm];
+			if (method_exists($this->dataSource, 'rowToArray')) {
+				$row = $this->dataSource->rowToArray($row);
+			} elseif (method_exists($row, 'toArray')) {
+				// deprecated
+				$row = $rows[$this->activeRowForm]->toArray();
+			}
 			foreach($row as $name => $value){
 				if($this->columnExists($name) && !empty($this['columns']->components[$name]->formRenderer)){
 					$row[$name] = call_user_func($this['columns']->components[$name]->formRenderer, $row);

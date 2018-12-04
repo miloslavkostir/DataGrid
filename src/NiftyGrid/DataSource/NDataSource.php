@@ -15,7 +15,7 @@ class NDataSource implements IDataSource
 {
 	private $table;
 
-	public function __construct($table)
+	public function __construct(\Nette\Database\Table\Selection $table)
 	{
 		$this->table = $table;
 	}
@@ -23,6 +23,11 @@ class NDataSource implements IDataSource
 	public function getData()
 	{
 		return $this->table;
+	}
+
+	public function rowToArray($row)
+	{
+		return $row->toArray();
 	}
 
 	public function getPrimaryKey()

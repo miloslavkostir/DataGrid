@@ -35,6 +35,13 @@ interface IDataSource
 	public function orderData($by, $way);
 
 	/**
+	 * Convert row to array
+	 * @param mixed $row
+	 * @return array
+	 */
+	//public function rowToArray($row);  // not yet (just warning in NiftyGrid\Grid::attached())
+
+	/**
 	 * Limit data to select
 	 * @param int $limit
 	 * @param int $offset

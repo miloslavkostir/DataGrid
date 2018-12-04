@@ -49,6 +49,11 @@ class DoctrineDataSource implements IDataSource
 		return $result;
 	}
 
+	public function rowToArray($row)
+	{
+		return $row;  // $row is already array
+	}
+
 	public function getPrimaryKey()
 	{
 		return $this->primary;

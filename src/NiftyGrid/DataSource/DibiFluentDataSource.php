@@ -64,6 +64,13 @@ class DibiFluentDataSource extends Nette\Object implements IDataSource
 
 
 
+	public function rowToArray($row)
+	{
+		return $row;  // $row is already array
+	}
+
+
+
 	public function getPrimaryKey()
 	{
 		return $this->pKeyColumn;
