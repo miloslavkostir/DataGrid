@@ -141,7 +141,11 @@ abstract class Grid extends \Nette\Application\UI\Control
 			$this->orderData($this->order);
 		}
 		if(!$this->hasActiveOrder() && $this->hasDefaultOrder() && $this->hasEnabledSorting()){
-			$order = explode(" ", $this->defaultOrder);
+			if (is_array($this->defaultOrder)) {
+				$order = $this->defaultOrder;
+			} else {
+				$order = explode(" ", $this->defaultOrder);
+			}
 			$this->dataSource->orderData($order[0], isset($order[1]) ? $order[1] : 'ASC');
 		}
 	}
@@ -429,11 +433,16 @@ abstract class Grid extends \Nette\Application\UI\Control
 	}
 
 	/**
-	 * @param string $order
+	 * Simple:
+	 * setDefaultOrder('colname'); or setDefaultOrder('colname DESC');
+	 * Advanced (corresponds with NiftyGrid\DataSource\IDataSource::orderData():
+	 * setDefaultOrder('colname', 'DESC');
+	 * @param string $order  Column name or whole ORDER clause
+	 * @param string $way
 	 */
-	public function setDefaultOrder($order)
+	public function setDefaultOrder($order, $way = NULL)
 	{
-		$this->defaultOrder = $order;
+		$this->defaultOrder = isset($way) ? [$order, $way] : $order;
 	}
 
 	/**
